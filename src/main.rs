@@ -1,32 +1,14 @@
 extern crate ncurses;
 
 use ncurses::*;
+use path_tree::*;
 
 mod path_tree;
 
 fn main() {
-    let test_entries = vec![
-        String::from("one"),
-        String::from("two"),
-        String::from("three"),
-        String::from("four"),
-        String::from("five"),
-        String::from("six"),
-        String::from("seven"),
-        String::from("eight"),
-        String::from("nine"),
-        String::from("ten"),
-        String::from("eleven"),
-        String::from("twelve"),
-        String::from("thirteen"),
-        String::from("fourteen"),
-        String::from("fifteen"),
-        String::from("sixteen"),
-        String::from("seventeen"),
-        String::from("eighteen"),
-        String::from("nineteen"),
-        String::from("twenty"),
-    ];
+    let mut path_node = PathNode::new("./tests/test_dirs");
+    expand_dir(&mut path_node, &TreeIndex::new(Vec::new()));
+    let mut test_entries = prettify(&path_node);
 
     /* Setup ncurses. */
     initscr();
@@ -71,6 +53,22 @@ fn main() {
                 if cursor_row >= test_entries.len() as i32 {
                     cursor_row = 0;
                 }
+
+                clear();
+                text_row = create_win(text_row, cursor_row, &test_entries);
+            }
+            KEY_RIGHT => {
+                let tree_index = flat_index_to_tree_index(&path_node, cursor_row as usize);
+                expand_dir(&mut path_node, &tree_index);
+                test_entries = prettify(&path_node);
+
+                clear();
+                text_row = create_win(text_row, cursor_row, &test_entries);
+            }
+            KEY_LEFT => {
+                let tree_index = flat_index_to_tree_index(&path_node, cursor_row as usize);
+                reduce_dir(&mut path_node, &tree_index);
+                test_entries = prettify(&path_node);
 
                 clear();
                 text_row = create_win(text_row, cursor_row, &test_entries);

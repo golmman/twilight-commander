@@ -1,5 +1,4 @@
-use std::fs::{read_dir, DirEntry};
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 #[derive(Debug)]
 pub struct PathNode {
@@ -15,7 +14,7 @@ pub struct TreeIndex {
 }
 
 impl PathNode {
-    fn new(file_path: &str) -> Self {
+    pub fn new(file_path: &str) -> Self {
         Self {
             children: Vec::new(),
             display_text: String::from(file_path),
@@ -26,7 +25,7 @@ impl PathNode {
 }
 
 impl TreeIndex {
-    fn new(index: Vec<usize>) -> Self {
+    pub fn new(index: Vec<usize>) -> Self {
         Self { index }
     }
 }
@@ -109,11 +108,11 @@ pub fn flat_index_to_tree_index(path_node: &PathNode, flat_index: usize) -> Tree
 
 fn prettify_rec(path_node: &PathNode, texts: &mut Vec<String>, depth: usize) {
     for child in &path_node.children {
-        let dir_indicator = if child.is_dir { "⋅> " } else { "⋅  " };
+        let dir_indicator = if child.is_dir { "-> " } else { "-  " };
 
         let text = format!(
             "{}{}{}",
-            "⋅  ".repeat(depth),
+            "-  ".repeat(depth),
             dir_indicator,
             child.display_text.clone()
         );
