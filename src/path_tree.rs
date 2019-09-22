@@ -141,48 +141,49 @@ mod tests {
 
         // expand_dir
         expand_dir(&mut p, &TreeIndex::new(Vec::new()));
-        assert_eq!(6, prettify(&p).len(), "expanding the root directory");
+        assert_eq!(13, prettify(&p).len(), "expanding the root directory");
 
         expand_dir(&mut p, &TreeIndex::new(vec![1]));
-        assert_eq!(6, prettify(&p).len(), "expanding a file does nothing");
+        assert_eq!(13, prettify(&p).len(), "expanding a file does nothing");
 
-        expand_dir(&mut p, &TreeIndex::new(vec![3]));
-        assert_eq!(10, prettify(&p).len());
+        expand_dir(&mut p, &TreeIndex::new(vec![7]));
+        assert_eq!(17, prettify(&p).len());
+        
 
-        expand_dir(&mut p, &TreeIndex::new(vec![3, 2]));
-        assert_eq!(16, prettify(&p).len());
+        expand_dir(&mut p, &TreeIndex::new(vec![7, 2]));
+        assert_eq!(23, prettify(&p).len());
 
-        expand_dir(&mut p, &TreeIndex::new(vec![3, 2, 4]));
-        assert_eq!(19, prettify(&p).len());
+        expand_dir(&mut p, &TreeIndex::new(vec![7, 2, 4]));
+        assert_eq!(26, prettify(&p).len());
 
-        expand_dir(&mut p, &TreeIndex::new(vec![3, 2, 4, 0]));
-        assert_eq!(22, prettify(&p).len());
+        expand_dir(&mut p, &TreeIndex::new(vec![7, 2, 4, 0]));
+        assert_eq!(29, prettify(&p).len());
 
         // println!("{:#?}", prettify(&p));
         // println!("------------------------------");
 
         // tree_index_to_flat_index
-        let flat_index = tree_index_to_flat_index(&TreeIndex::new(vec![3, 2, 4, 0, 0]));
-        assert_eq!(13, flat_index);
+        let flat_index = tree_index_to_flat_index(&TreeIndex::new(vec![7, 2, 4, 0, 0]));
+        assert_eq!(17, flat_index);
 
         // flat_index_to_tree_index
-        let tree_index = flat_index_to_tree_index(&p, 13);
-        assert_eq!(vec![3, 2, 4, 0, 0], tree_index.index);
+        let tree_index = flat_index_to_tree_index(&p, 17);
+        assert_eq!(vec![7, 2, 4, 0, 0], tree_index.index);
 
-        let tree_index = flat_index_to_tree_index(&p, 14);
-        assert_eq!(vec![3, 2, 4, 0, 1], tree_index.index);
+        let tree_index = flat_index_to_tree_index(&p, 18);
+        assert_eq!(vec![7, 2, 4, 0, 1], tree_index.index);
 
-        let tree_index = flat_index_to_tree_index(&p, 16);
-        assert_eq!(vec![3, 2, 4, 1], tree_index.index);
+        let tree_index = flat_index_to_tree_index(&p, 20);
+        assert_eq!(vec![7, 2, 4, 1], tree_index.index);
 
-        let tree_index = flat_index_to_tree_index(&p, 19);
-        assert_eq!(vec![3, 3], tree_index.index);
+        let tree_index = flat_index_to_tree_index(&p, 23);
+        assert_eq!(vec![7, 3], tree_index.index);
 
         // reduce_dir
-        reduce_dir(&mut p, &TreeIndex::new(vec![3, 2, 4, 0]));
-        assert_eq!(19, prettify(&p).len(), "reducing the last opened dir");
+        reduce_dir(&mut p, &TreeIndex::new(vec![7, 2, 4, 0]));
+        assert_eq!(26, prettify(&p).len(), "reducing the last opened dir");
 
-        reduce_dir(&mut p, &TreeIndex::new(vec![3, 2]));
-        assert_eq!(10, prettify(&p).len(), "reducing lots of sub dirs");
+        reduce_dir(&mut p, &TreeIndex::new(vec![7, 2]));
+        assert_eq!(17, prettify(&p).len(), "reducing lots of sub dirs");
     }
 }
