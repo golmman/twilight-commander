@@ -4,7 +4,9 @@ A simple console file manager.
 ## Implemented features
 * directory entry browsing
 
-## Upcoming features
+## Upcoming improvements
+* colors
+* utf8 support
 * configuration
   * global
   * per process
