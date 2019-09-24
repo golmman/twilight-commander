@@ -106,6 +106,4 @@ impl Pager {
 
         new_text_row
     }
-
-    fn print_debug_info() {}
 }

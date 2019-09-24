@@ -1,194 +1,60 @@
-use std::path::PathBuf;
-use std::fs::canonicalize;
-
-#[derive(Debug)]
-pub struct PathNode {
-    children: Vec<PathNode>,
-    display_text: String,
-    is_dir: bool,
-    path: PathBuf,
-}
-
-#[derive(Debug)]
-pub struct TreeIndex {
-    index: Vec<usize>,
-}
-
-impl PathNode {
-    pub fn new(file_path: &str) -> Self {
-        Self {
-            children: Vec::new(),
-            display_text: String::from(file_path),
-            is_dir: true,
-            path: PathBuf::from(file_path),
-        }
-    }
-
-    pub fn get_path(&self) -> String {
-        let canonicalized_path = canonicalize(self.path.as_path()).unwrap();
-        canonicalized_path.to_str().unwrap().to_string()
-    }
-}
-
-impl TreeIndex {
-    pub fn new(index: Vec<usize>) -> Self {
-        Self { index }
-    }
-}
-
-fn list_path_nodes(path: &PathBuf) -> Vec<PathNode> {
-    let dirs = path.read_dir().unwrap();
-
-    dirs.map(|dir_entry| {
-        let dir_entry = dir_entry.unwrap();
-
-        PathNode {
-            children: Vec::new(),
-            display_text: dir_entry.file_name().into_string().unwrap(),
-            is_dir: dir_entry.path().is_dir(),
-            path: dir_entry.path(),
-        }
-    })
-    .collect::<Vec<PathNode>>()
-}
-
-pub fn expand_dir(path_node: &mut PathNode, tree_index: &TreeIndex) {
-    let mut leaf_node = path_node;
-    for i in &tree_index.index {
-        leaf_node = &mut leaf_node.children[*i];
-    }
-
-    if !leaf_node.path.is_dir() {
-        return;
-    }
-
-    leaf_node.children = list_path_nodes(&leaf_node.path);
-}
-
-pub fn reduce_dir(path_node: &mut PathNode, tree_index: &TreeIndex) {
-    let mut leaf_node = path_node;
-    for i in &tree_index.index {
-        leaf_node = &mut leaf_node.children[*i];
-    }
-
-    leaf_node.children = Vec::new();
-}
-
-pub fn tree_index_to_flat_index(tree_index: &TreeIndex) -> usize {
-    let mut flat_index = 0;
-    for i in &tree_index.index {
-        flat_index += i + 1;
-    }
-
-    flat_index - 1
-}
-
-fn flat_index_to_tree_index_rec(
-    path_node: &PathNode,
-    flat_index: &mut usize,
-    tree_index: &mut TreeIndex,
-) -> bool {
-    if *flat_index == 0 {
-        return true;
-    }
-
-    for (c, child) in path_node.children.iter().enumerate() {
-        *flat_index -= 1;
-
-        tree_index.index.push(c);
-        if flat_index_to_tree_index_rec(child, flat_index, tree_index) {
-            return true;
-        }
-        tree_index.index.pop();
-    }
-
-    false
-}
-
-pub fn flat_index_to_tree_index(path_node: &PathNode, flat_index: usize) -> TreeIndex {
-    let mut result = TreeIndex::new(Vec::new());
-    flat_index_to_tree_index_rec(path_node, &mut (flat_index + 1), &mut result);
-
-    result
-}
-
-fn prettify_rec(path_node: &PathNode, texts: &mut Vec<String>, depth: usize) {
-    for child in &path_node.children {
-        let dir_indicator = if child.is_dir { "-> " } else { "-  " };
-
-        let text = format!(
-            "{}{}{}",
-            "-  ".repeat(depth),
-            dir_indicator,
-            child.display_text.clone()
-        );
-        texts.push(text);
-        prettify_rec(child, texts, depth + 1);
-    }
-}
-
-pub fn prettify(path_node: &PathNode) -> Vec<String> {
-    let mut result = Vec::new();
-
-    prettify_rec(path_node, &mut result, 0);
-
-    result
-}
+pub mod path_node;
+pub mod tree_index;
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use crate::path_tree::tree_index::TreeIndex;
+    use crate::path_tree::path_node::PathNode;
 
     #[test]
     fn path_tree_test() {
         let mut p = PathNode::new("./tests/test_dirs");
-        assert_eq!(0, prettify(&p).len());
+        assert_eq!(0, p.prettify().len());
 
         // expand_dir
-        expand_dir(&mut p, &TreeIndex::new(Vec::new()));
-        assert_eq!(13, prettify(&p).len(), "expanding the root directory");
+        p.expand_dir(&TreeIndex::new(Vec::new()));
+        assert_eq!(13, p.prettify().len(), "expanding the root directory");
 
-        expand_dir(&mut p, &TreeIndex::new(vec![1]));
-        assert_eq!(13, prettify(&p).len(), "expanding a file does nothing");
+        p.expand_dir(&TreeIndex::new(vec![1]));
+        assert_eq!(13, p.prettify().len(), "expanding a file does nothing");
 
-        expand_dir(&mut p, &TreeIndex::new(vec![7]));
-        assert_eq!(17, prettify(&p).len());
-        
+        p.expand_dir(&TreeIndex::new(vec![7]));
+        assert_eq!(17, p.prettify().len());
 
-        expand_dir(&mut p, &TreeIndex::new(vec![7, 2]));
-        assert_eq!(23, prettify(&p).len());
+        p.expand_dir(&TreeIndex::new(vec![7, 2]));
+        assert_eq!(23, p.prettify().len());
 
-        expand_dir(&mut p, &TreeIndex::new(vec![7, 2, 4]));
-        assert_eq!(26, prettify(&p).len());
+        p.expand_dir(&TreeIndex::new(vec![7, 2, 4]));
+        assert_eq!(26, p.prettify().len());
 
-        expand_dir(&mut p, &TreeIndex::new(vec![7, 2, 4, 0]));
-        assert_eq!(29, prettify(&p).len());
+        p.expand_dir(&TreeIndex::new(vec![7, 2, 4, 0]));
+        assert_eq!(29, p.prettify().len());
 
-        // println!("{:#?}", prettify(&p));
+        // println!("{:#?}", p.prettify());
         // println!("------------------------------");
 
         // tree_index_to_flat_index
-        let flat_index = tree_index_to_flat_index(&TreeIndex::new(vec![7, 2, 4, 0, 0]));
+        let flat_index = TreeIndex::new(vec![7, 2, 4, 0, 0]).tree_index_to_flat_index();
         assert_eq!(17, flat_index);
 
         // flat_index_to_tree_index
-        let tree_index = flat_index_to_tree_index(&p, 17);
+        let tree_index = p.flat_index_to_tree_index(17);
         assert_eq!(vec![7, 2, 4, 0, 0], tree_index.index);
 
-        let tree_index = flat_index_to_tree_index(&p, 18);
+        let tree_index = p.flat_index_to_tree_index(18);
         assert_eq!(vec![7, 2, 4, 0, 1], tree_index.index);
 
-        let tree_index = flat_index_to_tree_index(&p, 20);
+        let tree_index = p.flat_index_to_tree_index(20);
         assert_eq!(vec![7, 2, 4, 1], tree_index.index);
 
-        let tree_index = flat_index_to_tree_index(&p, 23);
+        let tree_index = p.flat_index_to_tree_index(23);
         assert_eq!(vec![7, 3], tree_index.index);
 
         // reduce_dir
-        reduce_dir(&mut p, &TreeIndex::new(vec![7, 2, 4, 0]));
-        assert_eq!(26, prettify(&p).len(), "reducing the last opened dir");
+        p.reduce_dir(&TreeIndex::new(vec![7, 2, 4, 0]));
+        assert_eq!(26, p.prettify().len(), "reducing the last opened dir");
 
-        reduce_dir(&mut p, &TreeIndex::new(vec![7, 2]));
-        assert_eq!(17, prettify(&p).len(), "reducing lots of sub dirs");
+        p.reduce_dir(&TreeIndex::new(vec![7, 2]));
+        assert_eq!(17, p.prettify().len(), "reducing lots of sub dirs");
     }
 }
