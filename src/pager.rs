@@ -19,20 +19,22 @@ impl Pager {
     }
 
     pub fn update(&self, text_row: i32, cursor_row: i32, text_entries: &[String]) -> i32 {
-        let spacing = self.config.debug.spacing;
-        let padding = self.config.debug.padding;
+        let padding_bot = self.config.debug.padding_bot;
+        let padding_top = self.config.debug.padding_top;
+        let spacing_bot = self.config.debug.spacing_bot;
+        let spacing_top = self.config.debug.spacing_top;
 
-        let displayable_rows = LINES() - (2 * spacing);
+        let displayable_rows = LINES() - (2 * spacing_top);
         let mut new_text_row = text_row;
         let mut color_pair;
 
-        if text_row + cursor_row < spacing + padding {
-            new_text_row += spacing + padding - (text_row + cursor_row);
-        } else if text_row + cursor_row > LINES() - (1 + spacing + padding) {
-            new_text_row -= text_row + cursor_row - (LINES() - (1 + spacing + padding));
+        if text_row + cursor_row < spacing_top + padding_top {
+            new_text_row += spacing_top + padding_top - (text_row + cursor_row);
+        } else if text_row + cursor_row > LINES() - (1 + spacing_top + padding_top) {
+            new_text_row -= text_row + cursor_row - (LINES() - (1 + spacing_top + padding_top));
         }
 
-        let first_index = spacing - new_text_row;
+        let first_index = spacing_top - new_text_row;
         let last_index = first_index + displayable_rows;
 
         init_pair(1, COLOR_WHITE, COLOR_BLACK);
@@ -49,32 +51,32 @@ impl Pager {
 
             if index >= 0 && index < text_entries.len() as i32 {
                 attron(COLOR_PAIR(color_pair));
-                mvaddstr(spacing + i, 2, &text_entries[index as usize]);
+                mvaddstr(spacing_top + i, 2, &text_entries[index as usize]);
                 attroff(COLOR_PAIR(color_pair));
             }
         }
 
         if self.config.debug.enabled {
-            // spacing debug
+            // spacing_top debug
             for i in 0..LINES() {
                 mvaddstr(i, 50, format!("{}", i).as_str());
             }
 
-            for i in 0..spacing {
-                mvaddstr(i, 30, "--- SPACING");
+            for i in 0..spacing_top {
+                mvaddstr(i, 30, "--- spacing_top");
             }
 
-            for i in 0..spacing {
-                mvaddstr(LINES() - (1 + i), 30, "--- SPACING");
+            for i in 0..spacing_top {
+                mvaddstr(LINES() - (1 + i), 30, "--- spacing_top");
             }
 
-            // padding debug
-            for i in 0..padding {
-                mvaddstr(spacing + i, 30, "~~~ PADDING");
+            // padding_top debug
+            for i in 0..padding_top {
+                mvaddstr(spacing_top + i, 30, "~~~ padding_top");
             }
 
-            for i in 0..padding {
-                mvaddstr(LINES() - (spacing + 1 + i), 30, "~~~ PADDING");
+            for i in 0..padding_top {
+                mvaddstr(LINES() - (spacing_top + 1 + i), 30, "~~~ padding_top");
             }
 
             // debug info

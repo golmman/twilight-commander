@@ -5,19 +5,27 @@ pub struct Debug {
     #[serde(default = "Debug::default_enabled")]
     pub enabled: bool,
 
-    #[serde(default = "Debug::default_padding")]
-    pub padding: i32,
+    #[serde(default = "Debug::default_padding_bot")]
+    pub padding_bot: i32,
 
-    #[serde(default = "Debug::default_spacing")]
-    pub spacing: i32,
+    #[serde(default = "Debug::default_padding_top")]
+    pub padding_top: i32,
+
+    #[serde(default = "Debug::default_spacing_bot")]
+    pub spacing_bot: i32,
+
+    #[serde(default = "Debug::default_spacing_top")]
+    pub spacing_top: i32,
 }
 
 impl Debug {
     pub fn default() -> Self {
         Self {
             enabled: Self::default_enabled(),
-            padding: Self::default_padding(),
-            spacing: Self::default_spacing(),
+            padding_bot: Self::default_padding_bot(),
+            padding_top: Self::default_padding_top(),
+            spacing_bot: Self::default_spacing_bot(),
+            spacing_top: Self::default_spacing_top(),
         }
     }
 
@@ -25,11 +33,19 @@ impl Debug {
         false
     }
 
-    fn default_padding() -> i32 {
+    fn default_padding_bot() -> i32 {
         3
     }
 
-    fn default_spacing() -> i32 {
+    fn default_padding_top() -> i32 {
+        3
+    }
+
+    fn default_spacing_bot() -> i32 {
+        0
+    }
+
+    fn default_spacing_top() -> i32 {
         0
     }
 }

@@ -1,7 +1,9 @@
 [debug]
 enabled = true
-spacing = 5
-padding = 3
+padding_bot = 1
+padding_top = 3
+spacing_bot = 7
+spacing_top = 5
 
 # hex rgb
 [color]
