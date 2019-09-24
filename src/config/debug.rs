@@ -46,6 +46,6 @@ impl Debug {
     }
 
     fn default_spacing_top() -> i32 {
-        0
+        1
     }
 }

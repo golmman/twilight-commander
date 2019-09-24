@@ -1,4 +1,5 @@
 use std::path::PathBuf;
+use std::fs::canonicalize;
 
 #[derive(Debug)]
 pub struct PathNode {
@@ -21,6 +22,11 @@ impl PathNode {
             is_dir: true,
             path: PathBuf::from(file_path),
         }
+    }
+
+    pub fn get_path(&self) -> String {
+        let canonicalized_path = canonicalize(self.path.as_path()).unwrap();
+        canonicalized_path.to_str().unwrap().to_string()
     }
 }
 

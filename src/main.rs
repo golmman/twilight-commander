@@ -22,7 +22,7 @@ fn main() {
 
     let pager = Pager::new(config.clone());
 
-    text_row = pager.update(text_row, cursor_row, &test_entries);
+    text_row = pager.update(text_row, cursor_row, &test_entries, path_node.get_path());
 
     let mut ch = getch();
     while ch != 113 {
@@ -34,7 +34,7 @@ fn main() {
                 }
 
                 clear();
-                text_row = pager.update(text_row, cursor_row, &test_entries);
+                text_row = pager.update(text_row, cursor_row, &test_entries, path_node.get_path());
             }
             KEY_DOWN => {
                 cursor_row += 1;
@@ -43,7 +43,7 @@ fn main() {
                 }
 
                 clear();
-                text_row = pager.update(text_row, cursor_row, &test_entries);
+                text_row = pager.update(text_row, cursor_row, &test_entries, path_node.get_path());
             }
             KEY_RIGHT => {
                 let tree_index = flat_index_to_tree_index(&path_node, cursor_row as usize);
@@ -51,7 +51,7 @@ fn main() {
                 test_entries = prettify(&path_node);
 
                 clear();
-                text_row = pager.update(text_row, cursor_row, &test_entries);
+                text_row = pager.update(text_row, cursor_row, &test_entries, path_node.get_path());
             }
             KEY_LEFT => {
                 let tree_index = flat_index_to_tree_index(&path_node, cursor_row as usize);
@@ -59,7 +59,7 @@ fn main() {
                 test_entries = prettify(&path_node);
 
                 clear();
-                text_row = pager.update(text_row, cursor_row, &test_entries);
+                text_row = pager.update(text_row, cursor_row, &test_entries, path_node.get_path());
             }
             _ => {}
         }
