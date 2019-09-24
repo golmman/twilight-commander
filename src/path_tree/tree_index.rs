@@ -8,6 +8,7 @@ impl TreeIndex {
         Self { index }
     }
 
+    #[allow(dead_code)] // TODO: remove?
     pub fn tree_index_to_flat_index(&self) -> usize {
         let mut flat_index = 0;
         for i in &self.index {
