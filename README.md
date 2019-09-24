@@ -16,6 +16,11 @@ A simple console file manager.
   * create directory
   * create file
   * move
+  * open with custom command
   * remove
   * rename
 * advanced navigation
+* subdirectory caching
+* sorting
+* more command line options
+* change to top directory

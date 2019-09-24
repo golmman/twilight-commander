@@ -1,13 +1,18 @@
 extern crate ncurses;
+extern crate toml;
 
+use config::*;
 use ncurses::*;
 use pager::*;
 use path_tree::*;
 
+mod config;
 mod pager;
 mod path_tree;
 
 fn main() {
+    let config = Config::new();
+
     let mut path_node = PathNode::new("./tests/test_dirs");
     expand_dir(&mut path_node, &TreeIndex::new(Vec::new()));
 
@@ -15,9 +20,9 @@ fn main() {
     let mut text_row = 0;
     let mut cursor_row = 0;
 
-    init_pager();
+    let pager = Pager::new(config.clone());
 
-    text_row = update_pager(text_row, cursor_row, &test_entries);
+    text_row = pager.update(text_row, cursor_row, &test_entries);
 
     let mut ch = getch();
     while ch != 113 {
@@ -29,7 +34,7 @@ fn main() {
                 }
 
                 clear();
-                text_row = update_pager(text_row, cursor_row, &test_entries);
+                text_row = pager.update(text_row, cursor_row, &test_entries);
             }
             KEY_DOWN => {
                 cursor_row += 1;
@@ -38,7 +43,7 @@ fn main() {
                 }
 
                 clear();
-                text_row = update_pager(text_row, cursor_row, &test_entries);
+                text_row = pager.update(text_row, cursor_row, &test_entries);
             }
             KEY_RIGHT => {
                 let tree_index = flat_index_to_tree_index(&path_node, cursor_row as usize);
@@ -46,7 +51,7 @@ fn main() {
                 test_entries = prettify(&path_node);
 
                 clear();
-                text_row = update_pager(text_row, cursor_row, &test_entries);
+                text_row = pager.update(text_row, cursor_row, &test_entries);
             }
             KEY_LEFT => {
                 let tree_index = flat_index_to_tree_index(&path_node, cursor_row as usize);
@@ -54,7 +59,7 @@ fn main() {
                 test_entries = prettify(&path_node);
 
                 clear();
-                text_row = update_pager(text_row, cursor_row, &test_entries);
+                text_row = pager.update(text_row, cursor_row, &test_entries);
             }
             _ => {}
         }

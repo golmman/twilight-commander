@@ -1,0 +1,8 @@
+[debug]
+enabled = true
+spacing = 5
+padding = 3
+
+# hex rgb
+[color]
+background = "000000"
