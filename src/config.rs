@@ -1,3 +1,4 @@
+use crate::config::behavior::Behavior;
 use crate::config::color::Color;
 use crate::config::debug::Debug;
 use serde::Deserialize;
@@ -6,16 +7,44 @@ use std::fs::File;
 use std::io::Read;
 use toml;
 
+mod behavior;
 mod color;
 mod debug;
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct Config {
+    #[serde(default = "Behavior::default")]
+    pub behavior: Behavior,
+
     #[serde(default = "Color::default")]
     pub color: Color,
 
     #[serde(default = "Debug::default")]
     pub debug: Debug,
+}
+
+impl Config {
+    fn default_config() -> Self {
+        Self {
+            behavior: Behavior::default(),
+            color: Color::default(),
+            debug: Debug::default(),
+        }
+    }
+
+    pub fn new() -> Self {
+        println!("{:?}", std::env::var("HOME").ok());
+
+        if let Some(config) = read_config_file_from_args() {
+            return config;
+        }
+
+        if let Some(config) = read_config_file_from_home() {
+            return config;
+        }
+
+        Self::default_config()
+    }
 }
 
 fn read_file(file_name: &str) -> std::io::Result<String> {
@@ -54,27 +83,4 @@ fn read_config_file_from_home() -> Option<Config> {
     }
 
     None
-}
-
-impl Config {
-    fn default_config() -> Self {
-        Self {
-            color: Color::default(),
-            debug: Debug::default(),
-        }
-    }
-
-    pub fn new() -> Self {
-        println!("{:?}", std::env::var("HOME").ok());
-
-        if let Some(config) = read_config_file_from_args() {
-            return config;
-        }
-
-        if let Some(config) = read_config_file_from_home() {
-            return config;
-        }
-
-        Self::default_config()
-    }
 }

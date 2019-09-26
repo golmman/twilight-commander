@@ -25,3 +25,4 @@ A simple console file manager.
 * more command line options
 * change to top directory
 * respond to resize events (is_term_resized)
+* nnn like scrolling

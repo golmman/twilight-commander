@@ -27,13 +27,14 @@ impl PathNode {
 
     fn prettify_rec(&self, texts: &mut Vec<String>, depth: usize) {
         for child in &self.children {
-            let dir_indicator = if child.is_dir { "-> " } else { "-  " };
+            // let dir_indicator = if child.is_dir { "-> " } else { "-  " };
+            let dir_indicator = if child.is_dir { "/" } else { "" };
 
             let text = format!(
                 "{}{}{}",
-                "-  ".repeat(depth),
+                "- ".repeat(depth),
+                child.display_text.clone(),
                 dir_indicator,
-                child.display_text.clone()
             );
             texts.push(text);
             child.prettify_rec(texts, depth + 1);
