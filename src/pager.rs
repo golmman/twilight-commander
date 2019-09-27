@@ -31,8 +31,9 @@ impl Pager {
             spacing_top - self.text_row + (LINES() - (spacing_bot + spacing_top)) / 2;
         let last_text_row = LINES() - (self.text_row + spacing_bot);
 
-        // re-center a cursor row that is under the center in the case that a subdirectory is opened
-        // in such a way that the bottom is not visible afterwards
+        // re-center a cursor row that is under the center (last text entry was visible)
+        // in the case that a subdirectory is opened
+        // in such a way that the bottom is not visible anymore
         if cursor_row_delta == 0
             && self.cursor_row - center_text_row > 0
             && self.cursor_row - center_text_row <= text_entries_len - last_text_row

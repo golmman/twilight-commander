@@ -1,0 +1,17 @@
+[behavior]
+scrolling = "center"
+
+# hex rgb
+[color]
+background = "000000"
+foreground = "FFFFFF"
+
+[debug]
+enabled = true
+padding_bot = 1
+padding_top = 3
+spacing_bot = 4
+spacing_top = 12
+
+[setup]
+working_dir = "."

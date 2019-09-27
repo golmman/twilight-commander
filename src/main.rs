@@ -12,9 +12,10 @@ mod pager;
 mod path_tree;
 
 fn main() {
+    // let config = Config::new();
     let config = Config::new();
 
-    let mut path_node = PathNode::new("./tests/test_dirs");
+    let mut path_node = PathNode::new(&config.setup.working_dir);
     path_node.expand_dir(&TreeIndex::new(Vec::new()));
 
     let mut text_entries = path_node.prettify();
