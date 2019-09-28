@@ -6,7 +6,7 @@ use std::path::PathBuf;
 pub struct PathNode {
     children: Vec<PathNode>,
     display_text: String,
-    is_dir: bool,
+    pub is_dir: bool,
     path: PathBuf,
 }
 
@@ -20,7 +20,7 @@ impl PathNode {
         }
     }
 
-    pub fn get_path(&self) -> String {
+    pub fn get_absolute_path(&self) -> String {
         let canonicalized_path = canonicalize(self.path.as_path()).unwrap();
         canonicalized_path.to_str().unwrap().to_string()
     }
@@ -126,5 +126,15 @@ impl PathNode {
         self.flat_index_to_tree_index_rec(&mut (flat_index + 1), &mut result);
 
         result
+    }
+
+    // TODO: tests
+    pub fn get_child_path_node(&self, tree_index: &TreeIndex) -> &Self {
+       let mut child_node = self;
+        for i in &tree_index.index {
+            child_node = &child_node.children[*i];
+        }
+
+        child_node
     }
 }

@@ -42,7 +42,7 @@ impl Config {
 
     fn read_config_file_from_home() -> Option<Self> {
         if let Ok(home_dir) = std::env::var("HOME") {
-            let home_config_path = format!("{}/{}", home_dir, ".tcrc.toml");
+            let home_config_path = format!("{}/{}", home_dir, ".twilight-commander-rc.toml");
             if let Ok(config_file) = read_file(&home_config_path) {
                 return toml::from_str(&config_file).ok();
             }
@@ -60,6 +60,7 @@ impl Config {
             let (key, value) = split_arg(arg);
 
             match key.as_str() {
+                "--behavior.file_action" => config.behavior.file_action = parse_value((key, value)),
                 "--behavior.scrolling" => config.behavior.scrolling = parse_value((key, value)),
                 "--color.background" => config.color.background = parse_value((key, value)),
                 "--color.foreground" => config.color.foreground = parse_value((key, value)),
