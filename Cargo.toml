@@ -3,7 +3,7 @@ authors = ["Dirk Kretschmann <kretschmanndi@gmail.com>"]
 edition = "2018"
 license = "MIT"
 name = "twilight-commander"
-version = "0.5.0"
+version = "0.6.0"
 
 [dependencies]
 ncurses = "5.99.0"
