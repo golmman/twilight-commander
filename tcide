@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if [[ -d $1 ]]; then
+    DIRNAME="$1"
+elif [[ -f $1 ]]; then
+    echo "'$1' is a file, please pass a directory"
+    exit 1
+else
+    echo "tcide: opens a tmux session with vim and integrated twilight-commander"
+    echo "usage: tcide <directory>"
+    exit 1
+fi
+
+echo "opening $DIRNAME"
+
+# TODO: check for used vim servers ?
+# vim --serverlist
+
+tmux new-session \
+    -s $DIRNAME \
+    -d twilight-commander \
+        --behavior.file_action="vim --servername $DIRNAME --remote-tab %s" \
+        --setup.working_dir="$DIRNAME" \
+    \; \
+    split-window -h "vim --servername $DIRNAME" \; \
+    split-window -v \; \
+    resize-pane -L 40 \; \
+    resize-pane -D 10 \; \
+    attach

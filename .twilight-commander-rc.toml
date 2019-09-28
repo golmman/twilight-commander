@@ -1,5 +1,6 @@
 [behavior]
 scrolling = "center"
+file_action = "true"
 
 # hex rgb
 [color]
@@ -11,7 +12,7 @@ enabled = true
 padding_bot = 1
 padding_top = 3
 spacing_bot = 4
-spacing_top = 12
+spacing_top = 1
 
 [setup]
 working_dir = "."
