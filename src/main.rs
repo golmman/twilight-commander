@@ -12,7 +12,14 @@ mod pager;
 mod path_tree;
 
 fn main() {
-    // let config = Config::new();
+    // let mut x = vec![String::from("b"), String::from("a"), String::from("c")];
+
+    // x.sort();
+
+    // println!("{:#?}", x);
+
+    // return;
+
     let config = Config::new();
 
     let mut path_node = PathNode::new(&config.setup.working_dir);

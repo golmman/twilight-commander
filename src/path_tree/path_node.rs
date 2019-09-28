@@ -27,7 +27,6 @@ impl PathNode {
 
     fn prettify_rec(&self, texts: &mut Vec<String>, depth: usize) {
         for child in &self.children {
-            // let dir_indicator = if child.is_dir { "-> " } else { "-  " };
             let dir_indicator = if child.is_dir { "/" } else { "" };
 
             let text = format!(
@@ -52,17 +51,30 @@ impl PathNode {
     fn list_path_nodes(path: &PathBuf) -> Vec<PathNode> {
         let dirs = path.read_dir().unwrap();
 
-        dirs.map(|dir_entry| {
-            let dir_entry = dir_entry.unwrap();
+        let mut path_nodes = dirs
+            .map(|dir_entry| {
+                let dir_entry = dir_entry.unwrap();
 
-            PathNode {
-                children: Vec::new(),
-                display_text: dir_entry.file_name().into_string().unwrap(),
-                is_dir: dir_entry.path().is_dir(),
-                path: dir_entry.path(),
+                PathNode {
+                    children: Vec::new(),
+                    display_text: dir_entry.file_name().into_string().unwrap(),
+                    is_dir: dir_entry.path().is_dir(),
+                    path: dir_entry.path(),
+                }
+            })
+            .collect::<Vec<PathNode>>();
+
+        path_nodes.sort_unstable_by(|a, b| {
+            if a.is_dir && !b.is_dir {
+                return std::cmp::Ordering::Less;
+            } else if !a.is_dir && b.is_dir {
+                return std::cmp::Ordering::Greater;
             }
-        })
-        .collect::<Vec<PathNode>>()
+
+            a.display_text.cmp(&b.display_text)
+        });
+
+        path_nodes
     }
 
     pub fn expand_dir(&mut self, tree_index: &TreeIndex) {

@@ -51,6 +51,7 @@ impl Config {
         None
     }
 
+    // TODO: tests
     fn parse_args<T>(mut config: Self, args: T) -> Self
     where
         T: IntoIterator<Item = String>,
@@ -89,7 +90,7 @@ impl Config {
 
 fn print_help() {
     println!(
-        r#"twilight-commander 0.4.0
+        r#"twilight-commander 0.5.0
 usage: twilight-commander [--key1=value1 --key2=value2 ...]"#
     );
     exit(0);
