@@ -158,7 +158,7 @@ impl Pager {
             mvaddstr(
                 LINES() - 3,
                 0,
-                format!("cursor_row: {}", self.cursor_row).as_str(),
+                format!("LINES: {}, COLS: {}", LINES(), COLS()).as_str(),
             );
             mvaddstr(
                 LINES() - 2,
@@ -168,7 +168,7 @@ impl Pager {
             mvaddstr(
                 LINES() - 1,
                 0,
-                format!("text_row: {}", self.text_row).as_str(),
+                format!("cursor_row: {}, text_row: {}", self.cursor_row, self.text_row).as_str(),
             );
         }
     }

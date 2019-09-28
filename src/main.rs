@@ -43,11 +43,11 @@ fn main() {
     while ch != 113 {
         match ch {
             KEY_UP => {
-                clear();
+                erase();
                 pager.update(-1, &text_entries, path_node.get_absolute_path());
             }
             KEY_DOWN => {
-                clear();
+                erase();
                 pager.update(1, &text_entries, path_node.get_absolute_path());
             }
             KEY_RIGHT => {
@@ -55,7 +55,7 @@ fn main() {
                 path_node.expand_dir(&tree_index);
                 text_entries = path_node.prettify();
 
-                clear();
+                erase();
                 pager.update(0, &text_entries, path_node.get_absolute_path());
             }
             KEY_LEFT => {
@@ -63,7 +63,7 @@ fn main() {
                 path_node.reduce_dir(&tree_index);
                 text_entries = path_node.prettify();
 
-                clear();
+                erase();
                 pager.update(0, &text_entries, path_node.get_absolute_path());
             }
             10 => {
@@ -78,6 +78,8 @@ fn main() {
             }
             _ => {}
         }
+        refresh();
+
         ch = getch();
     }
 
