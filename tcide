@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ -d $1 ]]; then
-    DIRNAME="$1"
+    DIRNAME="$(readlink -f $1)"
 elif [[ -f $1 ]]; then
     echo "'$1' is a file, please pass a directory"
     exit 1
@@ -13,8 +13,8 @@ fi
 
 echo "opening $DIRNAME"
 
-# TODO: check for used vim servers ?
-# vim --serverlist
+# TODO: check for used vim servers with 'vim --serverlist'?
+# tmux does not allow reuse of session names, so ths seems unecessary
 
 tmux new-session \
     -s $DIRNAME \
