@@ -16,7 +16,7 @@ echo "opening $DIRNAME"
 # TODO: check for used vim servers with 'vim --serverlist'?
 # tmux does not allow reuse of session names, so ths seems unecessary
 
-tmux new-session \
+TERM=xterm-256color tmux new-session \
     -s $DIRNAME \
     -d twilight-commander \
         --behavior.file_action="vim --servername $DIRNAME --remote-tab %s" \

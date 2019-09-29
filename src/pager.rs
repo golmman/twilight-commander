@@ -25,11 +25,13 @@ impl Pager {
     }
 
     fn scroll_like_center(&self, cursor_row_delta: i32, text_entries_len: i32) -> i32 {
+        let terminal_rows = getmaxy(stdscr());
+
         let spacing_bot = self.config.debug.spacing_bot;
         let spacing_top = self.config.debug.spacing_top;
         let center_text_row =
-            spacing_top - self.text_row + (LINES() - (spacing_bot + spacing_top)) / 2;
-        let last_text_row = LINES() - (self.text_row + spacing_bot);
+            spacing_top - self.text_row + (terminal_rows - (spacing_bot + spacing_top)) / 2;
+        let last_text_row = terminal_rows - (self.text_row + spacing_bot);
 
         // re-center a cursor row that is under the center (last text entry was visible)
         // in the case that a subdirectory is opened
@@ -47,7 +49,7 @@ impl Pager {
             if self.text_row >= spacing_top && cursor_row_delta < 0 {
                 return self.text_row;
             }
-            if self.text_row + text_entries_len <= LINES() - spacing_bot && cursor_row_delta > 0 {
+            if self.text_row + text_entries_len <= terminal_rows - spacing_bot && cursor_row_delta > 0 {
                 return self.text_row;
             }
 
@@ -58,14 +60,16 @@ impl Pager {
         // cursor row is beyond vision -> move the text row the minimal amount to correct that
         if self.text_row + self.cursor_row < spacing_top {
             return spacing_top - self.cursor_row;
-        } else if self.text_row + self.cursor_row > LINES() - (1 + spacing_bot) {
-            return LINES() - (1 + spacing_bot + self.cursor_row);
+        } else if self.text_row + self.cursor_row > terminal_rows - (1 + spacing_bot) {
+            return terminal_rows - (1 + spacing_bot + self.cursor_row);
         }
 
         self.text_row
     }
 
     fn scroll_like_editor(&self) -> i32 {
+        let terminal_rows = getmaxy(stdscr());
+
         let padding_bot = self.config.debug.padding_bot;
         let padding_top = self.config.debug.padding_top;
         let spacing_bot = self.config.debug.spacing_bot;
@@ -73,8 +77,8 @@ impl Pager {
 
         if self.text_row + self.cursor_row < spacing_top + padding_top {
             return spacing_top + padding_top - self.cursor_row;
-        } else if self.text_row + self.cursor_row > LINES() - (1 + spacing_bot + padding_bot) {
-            return LINES() - (1 + spacing_bot + padding_bot + self.cursor_row);
+        } else if self.text_row + self.cursor_row > terminal_rows - (1 + spacing_bot + padding_bot) {
+            return terminal_rows - (1 + spacing_bot + padding_bot + self.cursor_row);
         }
 
         self.text_row
@@ -91,6 +95,9 @@ impl Pager {
     }
 
     pub fn update(&mut self, cursor_row_delta: i32, text_entries: &[String], root_path: String) {
+        let terminal_rows = getmaxy(stdscr());
+        let terminal_cols = getmaxx(stdscr());
+
         let padding_bot = self.config.debug.padding_bot;
         let padding_top = self.config.debug.padding_top;
         let spacing_bot = self.config.debug.spacing_bot;
@@ -106,7 +113,7 @@ impl Pager {
             _ => 0,
         };
 
-        let displayable_rows = LINES() - (spacing_bot + spacing_top);
+        let displayable_rows = terminal_rows - (spacing_bot + spacing_top);
 
         let first_index = spacing_top - self.text_row;
         let last_index = first_index + displayable_rows;
@@ -127,19 +134,19 @@ impl Pager {
         }
 
         // print header
-        let header_split_at = std::cmp::max(0, root_path.len() as i32 - COLS() + 1);
+        let header_split_at = std::cmp::max(0, root_path.len() as i32 - terminal_cols + 1);
         mvaddstr(0, 0, &root_path.split_at(header_split_at as usize).1);
 
         // print debug info
         if self.config.debug.enabled {
             // line numbers
-            for i in 0..LINES() {
+            for i in 0..terminal_rows {
                 mvaddstr(i, 50, format!("{}", i).as_str());
             }
 
             // padding_top debug
             for i in 0..padding_bot {
-                mvaddstr(LINES() - (spacing_bot + 1 + i), 30, "~~~ padding_bot");
+                mvaddstr(terminal_rows - (spacing_bot + 1 + i), 30, "~~~ padding_bot");
             }
 
             for i in 0..padding_top {
@@ -148,7 +155,7 @@ impl Pager {
 
             // spacing_top debug
             for i in 0..spacing_bot {
-                mvaddstr(LINES() - (1 + i), 30, "--- spacing_bot");
+                mvaddstr(terminal_rows - (1 + i), 30, "--- spacing_bot");
             }
             for i in 0..spacing_top {
                 mvaddstr(i, 30, "--- spacing_top");
@@ -156,17 +163,17 @@ impl Pager {
 
             // debug info
             mvaddstr(
-                LINES() - 3,
+                terminal_rows - 3,
                 0,
-                format!("LINES: {}, COLS: {}", LINES(), COLS()).as_str(),
+                format!("LINES: {}, COLS: {}", terminal_rows, terminal_cols).as_str(),
             );
             mvaddstr(
-                LINES() - 2,
+                terminal_rows - 2,
                 0,
                 format!("first_index: {}, last_index: {}", first_index, last_index).as_str(),
             );
             mvaddstr(
-                LINES() - 1,
+                terminal_rows - 1,
                 0,
                 format!("cursor_row: {}, text_row: {}", self.cursor_row, self.text_row).as_str(),
             );
