@@ -1,5 +1,6 @@
 use crate::config::Config;
-use ncurses::*;
+use termion::terminal_size;
+use termion::{color, style};
 
 pub struct Pager {
     config: Config,
@@ -9,14 +10,6 @@ pub struct Pager {
 
 impl Pager {
     pub fn new(config: Config) -> Self {
-        initscr();
-        raw();
-        start_color();
-        keypad(stdscr(), true);
-        noecho();
-        curs_set(CURSOR_VISIBILITY::CURSOR_INVISIBLE);
-        refresh();
-
         Self {
             config,
             text_row: 0,
@@ -25,7 +18,8 @@ impl Pager {
     }
 
     fn scroll_like_center(&self, cursor_row_delta: i32, text_entries_len: i32) -> i32 {
-        let terminal_rows = getmaxy(stdscr());
+        let (_, terminal_rows_raw) = terminal_size().unwrap();
+        let terminal_rows = terminal_rows_raw as i32;
 
         let spacing_bot = self.config.debug.spacing_bot;
         let spacing_top = self.config.debug.spacing_top;
@@ -49,7 +43,9 @@ impl Pager {
             if self.text_row >= spacing_top && cursor_row_delta < 0 {
                 return self.text_row;
             }
-            if self.text_row + text_entries_len <= terminal_rows - spacing_bot && cursor_row_delta > 0 {
+            if self.text_row + text_entries_len <= terminal_rows - spacing_bot
+                && cursor_row_delta > 0
+            {
                 return self.text_row;
             }
 
@@ -68,7 +64,8 @@ impl Pager {
     }
 
     fn scroll_like_editor(&self) -> i32 {
-        let terminal_rows = getmaxy(stdscr());
+        let (_, terminal_rows_raw) = terminal_size().unwrap();
+        let terminal_rows = terminal_rows_raw as i32;
 
         let padding_bot = self.config.debug.padding_bot;
         let padding_top = self.config.debug.padding_top;
@@ -77,7 +74,8 @@ impl Pager {
 
         if self.text_row + self.cursor_row < spacing_top + padding_top {
             return spacing_top + padding_top - self.cursor_row;
-        } else if self.text_row + self.cursor_row > terminal_rows - (1 + spacing_bot + padding_bot) {
+        } else if self.text_row + self.cursor_row > terminal_rows - (1 + spacing_bot + padding_bot)
+        {
             return terminal_rows - (1 + spacing_bot + padding_bot + self.cursor_row);
         }
 
@@ -95,8 +93,9 @@ impl Pager {
     }
 
     pub fn update(&mut self, cursor_row_delta: i32, text_entries: &[String], root_path: String) {
-        let terminal_rows = getmaxy(stdscr());
-        let terminal_cols = getmaxx(stdscr());
+        let (terminal_cols_raw, terminal_rows_raw) = terminal_size().unwrap();
+        let terminal_rows = terminal_rows_raw as i32;
+        let terminal_cols = terminal_cols_raw as i32;
 
         let padding_bot = self.config.debug.padding_bot;
         let padding_top = self.config.debug.padding_top;
@@ -118,64 +117,89 @@ impl Pager {
         let first_index = spacing_top - self.text_row;
         let last_index = first_index + displayable_rows;
 
-        init_pair(1, COLOR_WHITE, COLOR_BLACK);
-        init_pair(2, COLOR_WHITE, COLOR_BLUE);
-
         // print rows
         for i in 0..displayable_rows {
             let index = first_index + i;
-            let color_pair = if index == self.cursor_row { 2 } else { 1 };
 
             if index >= 0 && index < text_entries.len() as i32 {
-                attron(COLOR_PAIR(color_pair));
-                mvaddstr(spacing_top + i, 2, &text_entries[index as usize]);
-                attroff(COLOR_PAIR(color_pair));
+                if index == self.cursor_row {
+                    print!(
+                        "{}{}{}{}",
+                        termion::cursor::Goto(2 + 1, (1 + spacing_top + i) as u16),
+                        color::Bg(color::Blue),
+                        &text_entries[index as usize],
+                        style::Reset
+                    );
+                } else {
+                    print!(
+                        "{}{}{}",
+                        termion::cursor::Goto(2 + 1, (1 + spacing_top + i) as u16),
+                        &text_entries[index as usize],
+                        style::Reset
+                    );
+                }
             }
         }
 
         // print header
         let header_split_at = std::cmp::max(0, root_path.len() as i32 - terminal_cols + 1);
-        mvaddstr(0, 0, &root_path.split_at(header_split_at as usize).1);
+        print!(
+            "{}{}",
+            termion::cursor::Goto(1, 1),
+            &root_path.split_at(header_split_at as usize).1
+        );
 
         // print debug info
         if self.config.debug.enabled {
             // line numbers
             for i in 0..terminal_rows {
-                mvaddstr(i, 50, format!("{}", i).as_str());
+                print!("{} L{}", termion::cursor::Goto(50, 1 + i as u16), i.to_string());
             }
 
             // padding_top debug
             for i in 0..padding_bot {
-                mvaddstr(terminal_rows - (spacing_bot + 1 + i), 30, "~~~ padding_bot");
+                print!(
+                    "{}~~~ padding_bot",
+                    termion::cursor::Goto(30, (terminal_rows - (spacing_bot + i)) as u16)
+                );
             }
 
             for i in 0..padding_top {
-                mvaddstr(spacing_top + i, 30, "~~~ padding_top");
+                print!(
+                    "{}~~~ padding_top",
+                    termion::cursor::Goto(30, (1 + spacing_top + i) as u16)
+                );
             }
 
             // spacing_top debug
             for i in 0..spacing_bot {
-                mvaddstr(terminal_rows - (1 + i), 30, "--- spacing_bot");
+                print!(
+                    "{}--- spacing_bot",
+                    termion::cursor::Goto(30, (terminal_rows - i) as u16)
+                );
             }
             for i in 0..spacing_top {
-                mvaddstr(i, 30, "--- spacing_top");
+                print!("{}--- spacing_top", termion::cursor::Goto(30, 1 + i as u16));
             }
 
             // debug info
-            mvaddstr(
-                terminal_rows - 3,
-                0,
-                format!("LINES: {}, COLS: {}", terminal_rows, terminal_cols).as_str(),
+            print!(
+                "{}LINES: {}, COLS: {}",
+                termion::cursor::Goto(1, (terminal_rows - 2) as u16),
+                terminal_rows,
+                terminal_cols
             );
-            mvaddstr(
-                terminal_rows - 2,
-                0,
-                format!("first_index: {}, last_index: {}", first_index, last_index).as_str(),
+            print!(
+                "{}first_index: {}, last_index: {}",
+                termion::cursor::Goto(1, (terminal_rows - 1) as u16),
+                first_index,
+                last_index
             );
-            mvaddstr(
-                terminal_rows - 1,
-                0,
-                format!("cursor_row: {}, text_row: {}", self.cursor_row, self.text_row).as_str(),
+            print!(
+                "{}cursor_row: {}, text_row: {}",
+                termion::cursor::Goto(1, terminal_rows as u16),
+                self.cursor_row,
+                self.text_row
             );
         }
     }

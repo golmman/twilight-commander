@@ -1,11 +1,14 @@
-extern crate ncurses;
+extern crate termion;
 extern crate toml;
 
 use config::*;
-use ncurses::*;
 use pager::*;
 use path_tree::path_node::PathNode;
 use path_tree::tree_index::TreeIndex;
+use std::io::{stdin, stdout, Write};
+use termion::event::Key;
+use termion::input::TermRead;
+use termion::raw::IntoRawMode;
 
 mod config;
 mod pager;
@@ -13,7 +16,6 @@ mod path_tree;
 
 fn perform_file_action(config: &Config, file_path: &str) {
     let file_action_replaced = config.behavior.file_action.replace("%s", file_path);
-    
     let mut file_action_split = file_action_replaced.split_whitespace();
 
     let program = file_action_split.next().unwrap();
@@ -35,39 +37,56 @@ fn main() {
 
     let mut text_entries = path_node.prettify();
 
+    let stdin = stdin();
+    let mut stdout = stdout().into_raw_mode().unwrap();
+
+    print!(
+        "{}{}{}",
+        termion::cursor::Hide,
+        termion::cursor::Goto(1, 1),
+        termion::clear::All,
+    );
+    stdout.flush().unwrap();
+
     let mut pager = Pager::new(config.clone());
 
     pager.update(0, &text_entries, path_node.get_absolute_path());
+    stdout.flush().unwrap();
 
-    let mut ch = getch();
-    while ch != 113 {
-        match ch {
-            KEY_UP => {
-                erase();
+    for ch in stdin.keys() {
+        match ch.unwrap() {
+            Key::Char('q') => {
+                break;
+            }
+            Key::Up => {
+                print!("{}", termion::clear::All);
                 pager.update(-1, &text_entries, path_node.get_absolute_path());
+                stdout.flush().unwrap();
             }
-            KEY_DOWN => {
-                erase();
+            Key::Down => {
+                print!("{}", termion::clear::All);
                 pager.update(1, &text_entries, path_node.get_absolute_path());
+                stdout.flush().unwrap();
             }
-            KEY_RIGHT => {
+            Key::Right => {
                 let tree_index = path_node.flat_index_to_tree_index(pager.cursor_row as usize);
                 path_node.expand_dir(&tree_index);
                 text_entries = path_node.prettify();
 
-                erase();
+                print!("{}", termion::clear::All);
                 pager.update(0, &text_entries, path_node.get_absolute_path());
+                stdout.flush().unwrap();
             }
-            KEY_LEFT => {
+            Key::Left => {
                 let tree_index = path_node.flat_index_to_tree_index(pager.cursor_row as usize);
                 path_node.reduce_dir(&tree_index);
                 text_entries = path_node.prettify();
 
-                erase();
+                print!("{}", termion::clear::All);
                 pager.update(0, &text_entries, path_node.get_absolute_path());
+                stdout.flush().unwrap();
             }
-            10 => {
-                // 
+            Key::Char('\u{0A}') => {
                 let tree_index = path_node.flat_index_to_tree_index(pager.cursor_row as usize);
 
                 let child_node = path_node.get_child_path_node(&tree_index);
@@ -78,10 +97,12 @@ fn main() {
             }
             _ => {}
         }
-        refresh();
-
-        ch = getch();
     }
 
-    endwin();
+    print!(
+        "{}{}{}",
+        termion::clear::All,
+        termion::cursor::Goto(1, 1),
+        termion::cursor::Show,
+    );
 }
