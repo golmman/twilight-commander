@@ -8,10 +8,10 @@ background = "000000"
 foreground = "FFFFFF"
 
 [debug]
-enabled = true
-padding_bot = 1
+enabled = false
+padding_bot = 3
 padding_top = 3
-spacing_bot = 4
+spacing_bot = 0
 spacing_top = 1
 
 [setup]
