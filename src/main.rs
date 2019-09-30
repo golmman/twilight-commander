@@ -13,6 +13,7 @@ use termion::raw::IntoRawMode;
 mod config;
 mod pager;
 mod path_tree;
+mod utils;
 
 fn perform_file_action(config: &Config, file_path: &str) {
     let file_action_replaced = config.behavior.file_action.replace("%s", file_path);
@@ -32,7 +33,7 @@ fn perform_file_action(config: &Config, file_path: &str) {
 fn main() {
     let config = Config::new();
 
-    let mut path_node = PathNode::new(&config.setup.working_dir);
+    let mut path_node = PathNode::from_config(&config);
     path_node.expand_dir(&TreeIndex::new(Vec::new()));
 
     let mut text_entries = path_node.prettify();

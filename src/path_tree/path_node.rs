@@ -1,22 +1,48 @@
+use crate::config::Config;
 use crate::path_tree::tree_index::TreeIndex;
+use std::cmp::Ordering;
 use std::fs::canonicalize;
 use std::path::PathBuf;
 
-#[derive(Debug)]
 pub struct PathNode {
     children: Vec<PathNode>,
     display_text: String,
     pub is_dir: bool,
     path: PathBuf,
+
+    sort_with_compare: fn(&PathNode, &PathNode) -> Ordering,
 }
 
 impl PathNode {
-    pub fn new(file_path: &str) -> Self {
+    fn sort_with_compare_dirs_top_simple(a: &PathNode, b: &PathNode) -> Ordering {
+        if a.is_dir && !b.is_dir {
+            return std::cmp::Ordering::Less;
+        } else if !a.is_dir && b.is_dir {
+            return std::cmp::Ordering::Greater;
+        }
+
+        a.display_text.cmp(&b.display_text)
+    }
+
+    fn sort_with_compare_dirs_bot_simple(a: &PathNode, b: &PathNode) -> Ordering {
+        Self::sort_with_compare_dirs_top_simple(b, a)
+    }
+
+    pub fn from_config(config: &Config) -> Self {
+        let sort_with_compare: fn(&PathNode, &PathNode) -> Ordering =
+            match config.behavior.path_node_sort.as_str() {
+                "none" => |_, _| Ordering::Equal,
+                "dirs_bot_simple" => Self::sort_with_compare_dirs_bot_simple,
+                "dirs_top_simple" => Self::sort_with_compare_dirs_top_simple,
+                _ => |_, _| Ordering::Equal,
+            };
+
         Self {
             children: Vec::new(),
-            display_text: String::from(file_path),
+            display_text: config.setup.working_dir.clone(),
             is_dir: true,
-            path: PathBuf::from(file_path),
+            path: PathBuf::from(config.setup.working_dir.clone()),
+            sort_with_compare,
         }
     }
 
@@ -48,8 +74,8 @@ impl PathNode {
         result
     }
 
-    fn list_path_nodes(path: &PathBuf) -> Vec<PathNode> {
-        let dirs = path.read_dir().unwrap();
+    fn list_path_node_children(path_node: &PathNode) -> Vec<PathNode> {
+        let dirs = path_node.path.read_dir().unwrap();
 
         let mut path_nodes = dirs
             .map(|dir_entry| {
@@ -60,34 +86,37 @@ impl PathNode {
                     display_text: dir_entry.file_name().into_string().unwrap(),
                     is_dir: dir_entry.path().is_dir(),
                     path: dir_entry.path(),
+                    sort_with_compare: path_node.sort_with_compare,//Box::new(|_, _| Ordering::Equal),
                 }
             })
             .collect::<Vec<PathNode>>();
 
-        path_nodes.sort_unstable_by(|a, b| {
-            if a.is_dir && !b.is_dir {
-                return std::cmp::Ordering::Less;
-            } else if !a.is_dir && b.is_dir {
-                return std::cmp::Ordering::Greater;
-            }
+        path_nodes.sort_unstable_by(path_node.sort_with_compare);
 
-            a.display_text.cmp(&b.display_text)
-        });
+        // path_nodes.sort_unstable_by(|a, b| {
+        //     if a.is_dir && !b.is_dir {
+        //         return std::cmp::Ordering::Less;
+        //     } else if !a.is_dir && b.is_dir {
+        //         return std::cmp::Ordering::Greater;
+        //     }
+
+        //     a.display_text.cmp(&b.display_text)
+        // });
 
         path_nodes
     }
 
     pub fn expand_dir(&mut self, tree_index: &TreeIndex) {
-        let mut leaf_node = self;
+        let mut path_node = self;
         for i in &tree_index.index {
-            leaf_node = &mut leaf_node.children[*i];
+            path_node = &mut path_node.children[*i];
         }
 
-        if !leaf_node.path.is_dir() {
+        if !path_node.path.is_dir() {
             return;
         }
 
-        leaf_node.children = Self::list_path_nodes(&leaf_node.path);
+        path_node.children = Self::list_path_node_children(&path_node);
     }
 
     pub fn reduce_dir(&mut self, tree_index: &TreeIndex) {
@@ -130,7 +159,7 @@ impl PathNode {
 
     // TODO: tests
     pub fn get_child_path_node(&self, tree_index: &TreeIndex) -> &Self {
-       let mut child_node = self;
+        let mut child_node = self;
         for i in &tree_index.index {
             child_node = &child_node.children[*i];
         }

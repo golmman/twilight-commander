@@ -1,6 +1,7 @@
 [behavior]
-scrolling = "center"
 file_action = "true"
+path_node_sort = "dirs_top_simple" # enum: none, dirs_top_simple, dirs_bot_simple
+scrolling = "center" # enum: center, editor
 
 # hex rgb
 [color]
