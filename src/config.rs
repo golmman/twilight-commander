@@ -86,15 +86,9 @@ impl Config {
             let (key, value) = Self::split_arg(arg);
 
             match key.as_str() {
-                "--behavior.file_action" => {
-                    config.behavior.file_action = Self::parse_value((key, value))
-                }
-                "--behavior.path_node_sort" => {
-                    config.behavior.path_node_sort = Self::parse_value((key, value))
-                }
-                "--behavior.scrolling" => {
-                    config.behavior.scrolling = Self::parse_value((key, value))
-                }
+                "--behavior.file_action" => config.behavior.file_action = Self::parse_value((key, value)),
+                "--behavior.path_node_sort" => config.behavior.path_node_sort = Self::parse_value((key, value)),
+                "--behavior.scrolling" => config.behavior.scrolling = Self::parse_value((key, value)),
                 "--color.background" => config.color.background = Self::parse_value((key, value)),
                 "--color.foreground" => config.color.foreground = Self::parse_value((key, value)),
                 "--debug.enabled" => config.debug.enabled = Self::parse_value((key, value)),
