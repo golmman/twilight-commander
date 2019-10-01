@@ -19,7 +19,7 @@ impl Pager {
 
     fn scroll_like_center(&self, cursor_row_delta: i32, text_entries_len: i32) -> i32 {
         let (_, terminal_rows_raw) = terminal_size().unwrap();
-        let terminal_rows = terminal_rows_raw as i32;
+        let terminal_rows = i32::from(terminal_rows_raw);
 
         let spacing_bot = self.config.debug.spacing_bot;
         let spacing_top = self.config.debug.spacing_top;
@@ -65,7 +65,7 @@ impl Pager {
 
     fn scroll_like_editor(&self) -> i32 {
         let (_, terminal_rows_raw) = terminal_size().unwrap();
-        let terminal_rows = terminal_rows_raw as i32;
+        let terminal_rows = i32::from(terminal_rows_raw);
 
         let padding_bot = self.config.debug.padding_bot;
         let padding_top = self.config.debug.padding_top;
@@ -94,8 +94,8 @@ impl Pager {
 
     pub fn update(&mut self, cursor_row_delta: i32, text_entries: &[String], root_path: String) {
         let (terminal_cols_raw, terminal_rows_raw) = terminal_size().unwrap();
-        let terminal_rows = terminal_rows_raw as i32;
-        let terminal_cols = terminal_cols_raw as i32;
+        let terminal_rows = i32::from(terminal_rows_raw);
+        let terminal_cols = i32::from(terminal_cols_raw);
 
         let padding_bot = self.config.debug.padding_bot;
         let padding_top = self.config.debug.padding_top;
