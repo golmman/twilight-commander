@@ -31,9 +31,9 @@ impl PathNode {
     pub fn from_config(config: &Config) -> Self {
         let sort_with_compare: fn(&PathNode, &PathNode) -> Ordering =
             match config.behavior.path_node_sort.as_str() {
-                "none" => |_, _| Ordering::Equal,
                 "dirs_bot_simple" => Self::sort_with_compare_dirs_bot_simple,
                 "dirs_top_simple" => Self::sort_with_compare_dirs_top_simple,
+                "none" => |_, _| Ordering::Equal,
                 _ => |_, _| Ordering::Equal,
             };
 
@@ -86,22 +86,12 @@ impl PathNode {
                     display_text: dir_entry.file_name().into_string().unwrap(),
                     is_dir: dir_entry.path().is_dir(),
                     path: dir_entry.path(),
-                    sort_with_compare: path_node.sort_with_compare,//Box::new(|_, _| Ordering::Equal),
+                    sort_with_compare: path_node.sort_with_compare,
                 }
             })
             .collect::<Vec<PathNode>>();
 
         path_nodes.sort_unstable_by(path_node.sort_with_compare);
-
-        // path_nodes.sort_unstable_by(|a, b| {
-        //     if a.is_dir && !b.is_dir {
-        //         return std::cmp::Ordering::Less;
-        //     } else if !a.is_dir && b.is_dir {
-        //         return std::cmp::Ordering::Greater;
-        //     }
-
-        //     a.display_text.cmp(&b.display_text)
-        // });
 
         path_nodes
     }

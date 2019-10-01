@@ -153,7 +153,11 @@ impl Pager {
         if self.config.debug.enabled {
             // line numbers
             for i in 0..terminal_rows {
-                print!("{} L{}", termion::cursor::Goto(50, 1 + i as u16), i.to_string());
+                print!(
+                    "{} L{}",
+                    termion::cursor::Goto(50, 1 + i as u16),
+                    i.to_string()
+                );
             }
 
             // padding_top debug
