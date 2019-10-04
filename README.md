@@ -35,7 +35,16 @@ Specified with the option `--behaviour.scrolling` (default = `center`)
 * `editor`: move the cursor until it hits the top/bottom boundaries set by the `debug.paddin_top/bot` limits
 
 ## Upcoming improvements
-* colors
+* **reload**
+* **configurable key bindings**
+* **indicator for empty directories**
+* **shorten entries which are too long**
+* **advanced navigation**
+  * jump to parent directory
+  * skip x entries by holding a modifier key
+  * collapse the current parent directory
+* **respond to terminal resize events (SIGWINCH, see POSIX signals)**
+* more colors, configurable
 * utf8 support
 * directory entry stats
 * directory entry management
@@ -46,11 +55,11 @@ Specified with the option `--behaviour.scrolling` (default = `center`)
   * ~~open with custom command~~
   * remove
   * rename
-* advanced navigation
-  * jump to parent directory
-  * skip entries
 * subdirectory caching
 * improved sorting
-* respond to terminal resize events
-* configurable key bindings
 * --help screen with info to all cmd line options
+* bookmark / pin entries (recursivly?) and prevent them from being collapsed
+* search
+  * case insensitive wildcard
+  * mark hits
+

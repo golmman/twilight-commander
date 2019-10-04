@@ -142,6 +142,7 @@ impl Pager {
         }
 
         // print header
+        // TODO: introduce "shorten_string_to function"
         let header_split_at = std::cmp::max(0, root_path.len() as i32 - terminal_cols + 1);
         print!(
             "{}{}",
