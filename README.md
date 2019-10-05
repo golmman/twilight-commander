@@ -36,9 +36,9 @@ Specified with the option `--behaviour.scrolling` (default = `center`)
 
 ## Upcoming improvements
 * **reload**
+* **shorten entries which are too long**
 * **configurable key bindings**
 * **indicator for empty directories**
-* **shorten entries which are too long**
 * **advanced navigation**
   * jump to parent directory
   * skip x entries by holding a modifier key

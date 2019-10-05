@@ -35,7 +35,6 @@ fn main() {
 
     let mut path_node = PathNode::from_config(&config);
     path_node.expand_dir(&TreeIndex::new(Vec::new()));
-
     let mut text_entries = path_node.prettify();
 
     let stdin = stdin();
@@ -50,7 +49,6 @@ fn main() {
     stdout.flush().unwrap();
 
     let mut pager = Pager::new(config.clone());
-
     pager.update(0, &text_entries, path_node.get_absolute_path());
     stdout.flush().unwrap();
 
@@ -95,6 +93,16 @@ fn main() {
                 if !child_node.is_dir {
                     perform_file_action(&config, &child_node.get_absolute_path());
                 }
+            }
+            Key::Char('r') => {
+                // TODO: this simply resets the tree, implement a recursive method
+                path_node = PathNode::from_config(&config);
+                path_node.expand_dir(&TreeIndex::new(Vec::new()));
+                text_entries = path_node.prettify();
+
+                print!("{}", termion::clear::All);
+                pager.update(0, &text_entries, path_node.get_absolute_path());
+                stdout.flush().unwrap();
             }
             _ => {}
         }

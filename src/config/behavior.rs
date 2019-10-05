@@ -26,7 +26,7 @@ impl Behavior {
     }
 
     fn default_path_node_sort() -> String {
-        String::from("path_node_sort")
+        String::from("dirs_top_simple")
     }
 
     fn default_scrolling() -> String {
