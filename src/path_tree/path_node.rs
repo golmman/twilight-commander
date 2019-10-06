@@ -28,6 +28,7 @@ impl PathNode {
         Self::sort_with_compare_dirs_top_simple(b, a)
     }
 
+    // TODO: why not "new", why config as a reference?
     pub fn from_config(config: &Config) -> Self {
         let sort_with_compare: fn(&PathNode, &PathNode) -> Ordering =
             match config.behavior.path_node_sort.as_str() {
@@ -74,6 +75,8 @@ impl PathNode {
         result
     }
 
+    // TODO: errors when accessing a dir with insufficient permissios
+    // eg. /lost+found
     fn list_path_node_children(path_node: &PathNode) -> Vec<PathNode> {
         let dirs = path_node.path.read_dir().unwrap();
 

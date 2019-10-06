@@ -8,6 +8,7 @@ Tested in Ubuntu 18.04.
 * up, down: move cursor
 * left, right: close, open directories
 * return: perform behavior.file_action
+* r: reload
 * q: quit
 
 ### configuration
@@ -35,15 +36,19 @@ Specified with the option `--behaviour.scrolling` (default = `center`)
 * `editor`: move the cursor until it hits the top/bottom boundaries set by the `debug.paddin_top/bot` limits
 
 ## Upcoming improvements
-* **reload**
-* **shorten entries which are too long**
 * **configurable key bindings**
 * **indicator for empty directories**
 * **advanced navigation**
   * jump to parent directory
   * skip x entries by holding a modifier key
   * collapse the current parent directory
-* **respond to terminal resize events (SIGWINCH, see POSIX signals)**
+* better response to terminal resize events: response is too slow, text is wrapped the truncated
+  * intended to work like `less -S <filename>`
+  * problem seems not to appear in plain xterm
+  * https://invisible-island.net/ncurses/man/resizeterm.3x.html
+  * https://linux.die.net/man/1/resize
+  * https://stackoverflow.com/questions/4738803/resize-terminal-and-scrolling-problem-with-ncurses#4739108
+* recursive reload
 * more colors, configurable
 * utf8 support
 * directory entry stats

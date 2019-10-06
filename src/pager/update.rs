@@ -1,4 +1,5 @@
 use crate::pager::Pager;
+use std::io::Write;
 use termion::terminal_size;
 
 impl Pager {
@@ -53,8 +54,9 @@ impl Pager {
             }
         }
 
-        // print header
         self.print_header(&header_text);
         self.print_debug_info();
+
+        self.stdout.flush().unwrap();
     }
 }

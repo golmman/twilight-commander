@@ -3,9 +3,10 @@ authors = ["Dirk Kretschmann <kretschmanndi@gmail.com>"]
 edition = "2018"
 license = "MIT"
 name = "twilight-commander"
-version = "0.7.2"
+version = "0.8.0"
 
 [dependencies]
+serde = { version = "1.0.101",  features = ["derive"] }
+signal-hook = "0.1.10"
 termion = "1.5.3"
 toml = "0.5.3"
-serde = { version = "1.0.101",  features = ["derive"] }
