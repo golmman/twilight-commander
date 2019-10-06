@@ -1,4 +1,7 @@
 # twilight-commander
+
+[![Build Status](https://travis-ci.org/golmman/twilight-commander.svg?branch=master)](https://travis-ci.org/golmman/twilight-commander)
+
 A simple console tree file explorer for linux, similiar to NERDTree but independent of vim.
 Tested in Ubuntu 18.04.
 
