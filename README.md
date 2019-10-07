@@ -65,7 +65,7 @@ Specified with the option `--behaviour.scrolling` (default = `center`)
   * rename
 * subdirectory caching
 * improved sorting
-* --help screen with info to all cmd line options
+* --help screen with info to all command line options
 * bookmark / pin entries (recursivly?) and prevent them from being collapsed
 * search
   * case insensitive wildcard

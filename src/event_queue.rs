@@ -21,6 +21,8 @@ pub struct EventQueue {
     path_node: PathNode,
     queue_receiver: Receiver<Event>,
     queue_sender: SyncSender<Event>,
+
+    // TODO: should be part of the model (path_tree)
     text_entries: Vec<String>,
 }
 
