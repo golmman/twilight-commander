@@ -40,7 +40,6 @@ Specified with the option `--behaviour.scrolling` (default = `center`)
 
 ## Upcoming improvements
 * **configurable key bindings**
-* **indicator for empty directories**
 * **advanced navigation**
   * jump to parent directory
   * skip x entries by holding a modifier key

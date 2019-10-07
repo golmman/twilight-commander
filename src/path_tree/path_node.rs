@@ -8,6 +8,7 @@ pub struct PathNode {
     children: Vec<PathNode>,
     display_text: String,
     pub is_dir: bool,
+    is_expanded: bool,
     path: PathBuf,
 
     sort_with_compare: fn(&PathNode, &PathNode) -> Ordering,
@@ -42,6 +43,7 @@ impl PathNode {
             children: Vec::new(),
             display_text: config.setup.working_dir.clone(),
             is_dir: true,
+            is_expanded: false,
             path: PathBuf::from(config.setup.working_dir.clone()),
             sort_with_compare,
         }
@@ -54,13 +56,16 @@ impl PathNode {
 
     fn prettify_rec(&self, texts: &mut Vec<String>, depth: usize) {
         for child in &self.children {
-            let dir_indicator = if child.is_dir { "/" } else { "" };
+            let expanded_indicator = if child.is_expanded { "v" } else { ">" };
+            let dir_prefix = if child.is_dir { format!("{} ", expanded_indicator) } else { String::from("  ") };
+            let dir_suffix = if child.is_dir { "/" } else { "" };
 
             let text = format!(
-                "{}{}{}",
+                "{}{}{}{}",
                 "- ".repeat(depth),
+                dir_prefix,
                 child.display_text.clone(),
-                dir_indicator,
+                dir_suffix,
             );
             texts.push(text);
             child.prettify_rec(texts, depth + 1);
@@ -88,6 +93,7 @@ impl PathNode {
                     children: Vec::new(),
                     display_text: dir_entry.file_name().into_string().unwrap(),
                     is_dir: dir_entry.path().is_dir(),
+                    is_expanded: false,
                     path: dir_entry.path(),
                     sort_with_compare: path_node.sort_with_compare,
                 }
@@ -109,16 +115,18 @@ impl PathNode {
             return;
         }
 
+        path_node.is_expanded = true;
         path_node.children = Self::list_path_node_children(&path_node);
     }
 
     pub fn reduce_dir(&mut self, tree_index: &TreeIndex) {
-        let mut leaf_node = self;
+        let mut path_node = self;
         for i in &tree_index.index {
-            leaf_node = &mut leaf_node.children[*i];
+            path_node = &mut path_node.children[*i];
         }
 
-        leaf_node.children = Vec::new();
+        path_node.is_expanded = false;
+        path_node.children = Vec::new();
     }
 
     fn flat_index_to_tree_index_rec(
