@@ -8,6 +8,11 @@ scrolling = "center" # enum: center, editor
 background = "000000"
 foreground = "FFFFFF"
 
+[composition]
+indent = 2
+show_indent = false
+use_utf8 = true
+
 [debug]
 enabled = false
 padding_bot = 3

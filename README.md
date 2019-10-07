@@ -32,11 +32,14 @@ is set with the option `--debug.enabled=true`.
 ### directory entry management
 The command line option / config value `--behavior.file_action` defines the action taken when the return key is pressed on a file. It defaults to [true](https://en.wikipedia.org/wiki/True_and_false_(commands)), which does (almost) nothing.
 
-### Scrolling modes
+### scrolling modes
 Specified with the option `--behaviour.scrolling` (default = `center`)
 
 * `center`: move the cursor until it is in the center, then move the text instead
 * `editor`: move the cursor until it hits the top/bottom boundaries set by the `debug.paddin_top/bot` limits
+
+### utf-8 support
+In case your terminal does not support utf-8 you can disable it with `--composition.use_utf8=false`.
 
 ## Upcoming improvements
 * **configurable key bindings**
@@ -52,7 +55,6 @@ Specified with the option `--behaviour.scrolling` (default = `center`)
   * https://stackoverflow.com/questions/4738803/resize-terminal-and-scrolling-problem-with-ncurses#4739108
 * recursive reload
 * more colors, configurable
-* utf8 support
 * directory entry stats
 * directory entry management
   * copy
