@@ -30,14 +30,15 @@ impl PathNode {
     }
 
     // TODO: why not "new", why config as a reference?
+    // TODO: config as a parameter is only needed for 'sort_with_compare', which should
+    //       not be a field of the path_node but a parameter of expand_dir
     pub fn from_config(config: &Config) -> Self {
-        let sort_with_compare: fn(&PathNode, &PathNode) -> Ordering =
-            match config.behavior.path_node_sort.as_str() {
-                "dirs_bot_simple" => Self::sort_with_compare_dirs_bot_simple,
-                "dirs_top_simple" => Self::sort_with_compare_dirs_top_simple,
-                "none" => |_, _| Ordering::Equal,
-                _ => |_, _| Ordering::Equal,
-            };
+        let sort_with_compare: fn(&PathNode, &PathNode) -> Ordering = match config.behavior.path_node_sort.as_str() {
+            "dirs_bot_simple" => Self::sort_with_compare_dirs_bot_simple,
+            "dirs_top_simple" => Self::sort_with_compare_dirs_top_simple,
+            "none" => |_, _| Ordering::Equal,
+            _ => |_, _| Ordering::Equal,
+        };
 
         Self {
             children: Vec::new(),
@@ -54,34 +55,79 @@ impl PathNode {
         canonicalized_path.to_str().unwrap().to_string()
     }
 
-    fn prettify_rec(&self, texts: &mut Vec<String>, depth: usize) {
+    fn get_dir_prefix(&self, config: &Config) -> String {
+        let expanded_char = if config.composition.use_utf8 {
+            '▼'
+        } else {
+            'v'
+        };
+
+        let reduced_char = if config.composition.use_utf8 {
+            '▶'
+        } else {
+            '>'
+        };
+        
+        let expanded_indicator = if self.is_expanded { expanded_char } else { reduced_char };
+
+        if self.is_dir {
+            format!("{} ", expanded_indicator)
+        } else {
+            String::from("  ")
+        }
+    }
+
+    fn get_dir_suffix(&self, _config: &Config) -> String {
+        if self.is_dir {
+            String::from("/")
+        } else {
+            String::from("")
+        }
+    }
+
+    fn get_indent(&self, config: &Config, depth: usize) -> String {
+        let indent_char = if !config.composition.show_indent {
+            ' '
+        } else if config.composition.use_utf8 {
+            '·'
+        } else {
+            '-'
+        };
+        
+        let indent = " ".repeat(config.composition.indent as usize - 1);
+
+        format!("{}{}", indent_char, indent).repeat(depth)
+    }
+
+    fn prettify_rec(&self, config: &Config, texts: &mut Vec<String>, depth: usize) {
         for child in &self.children {
-            let expanded_indicator = if child.is_expanded { "v" } else { ">" };
-            let dir_prefix = if child.is_dir { format!("{} ", expanded_indicator) } else { String::from("  ") };
-            let dir_suffix = if child.is_dir { "/" } else { "" };
+            let dir_prefix = child.get_dir_prefix(config);
+            let dir_suffix = child.get_dir_suffix(config);
+            let indent = child.get_indent(config, depth);
 
             let text = format!(
                 "{}{}{}{}",
-                "- ".repeat(depth),
+                indent,
                 dir_prefix,
                 child.display_text.clone(),
                 dir_suffix,
             );
             texts.push(text);
-            child.prettify_rec(texts, depth + 1);
+            child.prettify_rec(config, texts, depth + 1);
         }
     }
 
-    pub fn prettify(&self) -> Vec<String> {
+    pub fn prettify(&self, config: &Config) -> Vec<String> {
         let mut result = Vec::new();
 
-        self.prettify_rec(&mut result, 0);
+        self.prettify_rec(config, &mut result, 0);
 
         result
     }
 
     // TODO: errors when accessing a dir with insufficient permissios
-    // eg. /lost+found
+    //       eg. /lost+found
+    // TODO: why not a class method?
     fn list_path_node_children(path_node: &PathNode) -> Vec<PathNode> {
         let dirs = path_node.path.read_dir().unwrap();
 
@@ -129,11 +175,7 @@ impl PathNode {
         path_node.children = Vec::new();
     }
 
-    fn flat_index_to_tree_index_rec(
-        &self,
-        flat_index: &mut usize,
-        tree_index: &mut TreeIndex,
-    ) -> bool {
+    fn flat_index_to_tree_index_rec(&self, flat_index: &mut usize, tree_index: &mut TreeIndex) -> bool {
         if *flat_index == 0 {
             return true;
         }

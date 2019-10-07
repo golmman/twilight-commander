@@ -14,26 +14,26 @@ mod tests {
         config.behavior.path_node_sort = String::from("dirs_top_simple");
 
         let mut p = PathNode::from_config(&config);
-        assert_eq!(0, p.prettify().len());
+        assert_eq!(0, p.prettify(&config).len());
 
         // expand_dir
         p.expand_dir(&TreeIndex::new(Vec::new()));
-        assert_eq!(13, p.prettify().len(), "expanding the root directory");
+        assert_eq!(13, p.prettify(&config).len(), "expanding the root directory");
 
         p.expand_dir(&TreeIndex::new(vec![3]));
-        assert_eq!(13, p.prettify().len(), "expanding a file does nothing");
+        assert_eq!(13, p.prettify(&config).len(), "expanding a file does nothing");
 
         p.expand_dir(&TreeIndex::new(vec![1]));
-        assert_eq!(17, p.prettify().len());
+        assert_eq!(17, p.prettify(&config).len());
 
         p.expand_dir(&TreeIndex::new(vec![1, 0]));
-        assert_eq!(23, p.prettify().len());
+        assert_eq!(23, p.prettify(&config).len());
 
         p.expand_dir(&TreeIndex::new(vec![1, 0, 2]));
-        assert_eq!(26, p.prettify().len());
+        assert_eq!(26, p.prettify(&config).len());
 
         p.expand_dir(&TreeIndex::new(vec![1, 0, 2, 1]));
-        assert_eq!(29, p.prettify().len());
+        assert_eq!(29, p.prettify(&config).len());
 
         // tree_index_to_flat_index
         let flat_index = TreeIndex::new(vec![7, 2, 4, 0, 0]).tree_index_to_flat_index();
@@ -54,10 +54,10 @@ mod tests {
 
         // reduce_dir
         p.reduce_dir(&TreeIndex::new(vec![1, 0, 2, 1]));
-        assert_eq!(26, p.prettify().len(), "reducing the last opened dir");
+        assert_eq!(26, p.prettify(&config).len(), "reducing the last opened dir");
 
         p.reduce_dir(&TreeIndex::new(vec![1, 0]));
-        assert_eq!(17, p.prettify().len(), "reducing lots of sub dirs");
+        assert_eq!(17, p.prettify(&config).len(), "reducing lots of sub dirs");
     }
 
     #[test]
@@ -67,32 +67,32 @@ mod tests {
         config.behavior.path_node_sort = String::from("dirs_bot_simple");
 
         let mut p = PathNode::from_config(&config);
-        assert_eq!(0, p.prettify().len());
+        assert_eq!(0, p.prettify(&config).len());
 
         // expand_dir
         p.expand_dir(&TreeIndex::new(Vec::new()));
-        assert_eq!(13, p.prettify().len(), "expanding the root directory");
+        assert_eq!(13, p.prettify(&config).len(), "expanding the root directory");
 
         p.expand_dir(&TreeIndex::new(vec![3]));
-        assert_eq!(13, p.prettify().len(), "expanding a file does nothing");
+        assert_eq!(13, p.prettify(&config).len(), "expanding a file does nothing");
 
         p.expand_dir(&TreeIndex::new(vec![11]));
-        assert_eq!(17, p.prettify().len());
+        assert_eq!(17, p.prettify(&config).len());
 
         p.expand_dir(&TreeIndex::new(vec![11, 3]));
-        assert_eq!(23, p.prettify().len());
+        assert_eq!(23, p.prettify(&config).len());
 
         p.expand_dir(&TreeIndex::new(vec![11, 3, 3]));
-        assert_eq!(26, p.prettify().len());
+        assert_eq!(26, p.prettify(&config).len());
 
         p.expand_dir(&TreeIndex::new(vec![11, 3, 3, 1]));
-        assert_eq!(29, p.prettify().len());
+        assert_eq!(29, p.prettify(&config).len());
 
         // reduce_dir
         p.reduce_dir(&TreeIndex::new(vec![11, 3, 3, 1]));
-        assert_eq!(26, p.prettify().len(), "reducing the last opened dir");
+        assert_eq!(26, p.prettify(&config).len(), "reducing the last opened dir");
 
         p.reduce_dir(&TreeIndex::new(vec![11, 3]));
-        assert_eq!(17, p.prettify().len(), "reducing lots of sub dirs");
+        assert_eq!(17, p.prettify(&config).len(), "reducing lots of sub dirs");
     }
 }

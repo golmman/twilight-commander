@@ -1,5 +1,6 @@
 use crate::config::behavior::Behavior;
 use crate::config::color::Color;
+use crate::config::composition::Composition;
 use crate::config::debug::Debug;
 use crate::config::setup::Setup;
 use crate::utils::print_help;
@@ -12,6 +13,7 @@ use toml;
 mod args_parser;
 mod behavior;
 mod color;
+mod composition;
 mod debug;
 mod setup;
 
@@ -22,6 +24,9 @@ pub struct Config {
 
     #[serde(default = "Color::default")]
     pub color: Color,
+
+    #[serde(default = "Composition::default")]
+    pub composition: Composition,
 
     #[serde(default = "Debug::default")]
     pub debug: Debug,
@@ -35,6 +40,7 @@ impl Config {
         Self {
             behavior: Behavior::default(),
             color: Color::default(),
+            composition: Composition::default(),
             debug: Debug::default(),
             setup: Setup::default(),
         }
@@ -90,6 +96,9 @@ impl Config {
                 "--behavior.scrolling" => config.behavior.scrolling = Self::parse_value((key, value)),
                 "--color.background" => config.color.background = Self::parse_value((key, value)),
                 "--color.foreground" => config.color.foreground = Self::parse_value((key, value)),
+                "--composition.indent" => config.composition.indent = Self::parse_value((key, value)),
+                "--composition.show_indent" => config.composition.show_indent = Self::parse_value((key, value)),
+                "--composition.use_utf8" => config.composition.use_utf8 = Self::parse_value((key, value)),
                 "--debug.enabled" => config.debug.enabled = Self::parse_value((key, value)),
                 "--debug.padding_bot" => config.debug.padding_bot = Self::parse_value((key, value)),
                 "--debug.padding_top" => config.debug.padding_top = Self::parse_value((key, value)),

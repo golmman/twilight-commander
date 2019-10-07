@@ -32,7 +32,7 @@ impl EventQueue {
 
         let mut path_node = PathNode::from_config(&config);
         path_node.expand_dir(&TreeIndex::new(Vec::new()));
-        let text_entries = path_node.prettify();
+        let text_entries = path_node.prettify(&config);
 
         let mut pager = Pager::new(config.clone());
         pager.update(0, &text_entries, path_node.get_absolute_path());
@@ -95,7 +95,7 @@ impl EventQueue {
             Key::Right => {
                 let tree_index = self.path_node.flat_index_to_tree_index(self.pager.cursor_row as usize);
                 self.path_node.expand_dir(&tree_index);
-                self.text_entries = self.path_node.prettify();
+                self.text_entries = self.path_node.prettify(&self.config);
 
                 print!("{}", termion::clear::All);
                 self.pager
@@ -105,7 +105,7 @@ impl EventQueue {
             Key::Left => {
                 let tree_index = self.path_node.flat_index_to_tree_index(self.pager.cursor_row as usize);
                 self.path_node.reduce_dir(&tree_index);
-                self.text_entries = self.path_node.prettify();
+                self.text_entries = self.path_node.prettify(&self.config);
 
                 print!("{}", termion::clear::All);
                 self.pager
@@ -126,7 +126,7 @@ impl EventQueue {
                 // TODO: this simply resets the tree, implement a recursive method
                 self.path_node = PathNode::from_config(&self.config);
                 self.path_node.expand_dir(&TreeIndex::new(Vec::new()));
-                self.text_entries = self.path_node.prettify();
+                self.text_entries = self.path_node.prettify(&self.config);
 
                 print!("{}", termion::clear::All);
                 self.pager
