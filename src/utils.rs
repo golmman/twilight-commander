@@ -10,9 +10,7 @@ pub fn read_file(file_name: &str) -> std::io::Result<String> {
 }
 
 pub fn print_help() {
-    println!(
-        r#"twilight-commander 0.5.0
-usage: twilight-commander [--key1=value1 --key2=value2 ...]"#
-    );
+    println!("{} {}", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION"));
+    println!(r#"usage: twilight-commander [--key1=value1 --key2=value2 ...]"#);
     exit(0);
 }
