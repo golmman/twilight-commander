@@ -1,4 +1,4 @@
-use crate::pager::Pager;
+use crate::view::Pager;
 
 impl Pager {
     pub fn scroll_like_center(&self, cursor_row_delta: i32, text_entries_len: i32) -> i32 {

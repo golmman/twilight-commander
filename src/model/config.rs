@@ -1,8 +1,8 @@
-use crate::config::behavior::Behavior;
-use crate::config::color::Color;
-use crate::config::composition::Composition;
-use crate::config::debug::Debug;
-use crate::config::setup::Setup;
+use crate::model::config::behavior::Behavior;
+use crate::model::config::color::Color;
+use crate::model::config::composition::Composition;
+use crate::model::config::debug::Debug;
+use crate::model::config::setup::Setup;
 use crate::utils::print_help;
 use crate::utils::read_file;
 use serde::Deserialize;

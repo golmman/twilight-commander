@@ -1,13 +1,12 @@
 extern crate termion;
 extern crate toml;
 
-use config::Config;
-use event_queue::EventQueue;
+use model::config::Config;
+use controller::EventQueue;
 
-mod config;
-mod event_queue;
-mod pager;
-mod path_tree;
+mod controller;
+mod view;
+mod model;
 mod utils;
 
 fn main() {

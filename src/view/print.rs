@@ -1,4 +1,4 @@
-use crate::pager::Pager;
+use crate::view::Pager;
 use termion::{color, style};
 
 impl Pager {

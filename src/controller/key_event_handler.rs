@@ -1,4 +1,4 @@
-use crate::event_queue::event::Event;
+use crate::controller::event::Event;
 use std::io::stdin;
 use std::sync::mpsc::SyncSender;
 use termion::input::TermRead;

@@ -1,4 +1,4 @@
-use crate::pager::Pager;
+use crate::view::Pager;
 
 impl Pager {
     pub fn shorten_string_to_terminal_cols(&self, string: &str) -> String {

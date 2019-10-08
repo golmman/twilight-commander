@@ -1,11 +1,12 @@
+pub mod config;
 pub mod path_node;
 pub mod tree_index;
 
 #[cfg(test)]
 mod tests {
-    use crate::path_tree::path_node::PathNode;
-    use crate::path_tree::tree_index::TreeIndex;
-    use crate::config::Config;
+    use crate::model::path_node::PathNode;
+    use crate::model::tree_index::TreeIndex;
+    use crate::model::config::Config;
 
     #[test]
     fn test_integration_with_path_node_sort_dirs_top_simple() {

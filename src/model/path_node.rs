@@ -1,5 +1,5 @@
-use crate::config::Config;
-use crate::path_tree::tree_index::TreeIndex;
+use crate::model::config::Config;
+use crate::model::tree_index::TreeIndex;
 use std::cmp::Ordering;
 use std::fs::canonicalize;
 use std::path::PathBuf;

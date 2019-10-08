@@ -50,6 +50,7 @@ In case your terminal does not support utf-8 you can disable it with `--composit
 * better response to terminal resize events: response is too slow, text is wrapped the truncated
   * intended to work like `less -S <filename>`
   * problem seems not to appear in plain xterm
+  * https://www.xfree86.org/4.8.0/ctlseqs.html
   * https://invisible-island.net/ncurses/man/resizeterm.3x.html
   * https://linux.die.net/man/1/resize
   * https://stackoverflow.com/questions/4738803/resize-terminal-and-scrolling-problem-with-ncurses#4739108

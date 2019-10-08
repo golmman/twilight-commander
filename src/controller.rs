@@ -1,11 +1,11 @@
 use std::sync::mpsc::sync_channel;
-use crate::config::Config;
-use crate::event_queue::event::Event;
-use crate::event_queue::key_event_handler::KeyEventHandler;
-use crate::event_queue::resize_event_handler::ResizeEventHandler;
-use crate::pager::Pager;
-use crate::path_tree::path_node::PathNode;
-use crate::path_tree::tree_index::TreeIndex;
+use crate::model::config::Config;
+use crate::controller::event::Event;
+use crate::controller::key_event_handler::KeyEventHandler;
+use crate::controller::resize_event_handler::ResizeEventHandler;
+use crate::view::Pager;
+use crate::model::path_node::PathNode;
+use crate::model::tree_index::TreeIndex;
 use std::sync::mpsc::Receiver;
 use std::sync::mpsc::SyncSender;
 use std::thread;
@@ -22,7 +22,7 @@ pub struct EventQueue {
     queue_receiver: Receiver<Event>,
     queue_sender: SyncSender<Event>,
 
-    // TODO: should be part of the model (path_tree)
+    // TODO: should be part of the model
     text_entries: Vec<String>,
 }
 

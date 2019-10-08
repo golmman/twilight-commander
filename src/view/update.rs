@@ -1,4 +1,4 @@
-use crate::pager::Pager;
+use crate::view::Pager;
 use std::io::Write;
 use termion::terminal_size;
 

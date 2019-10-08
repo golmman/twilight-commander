@@ -1,4 +1,4 @@
-use crate::config::Config;
+use crate::model::config::Config;
 use std::io::stdout;
 use std::io::Write;
 use termion::raw::IntoRawMode;
@@ -7,7 +7,7 @@ use termion::raw::RawTerminal;
 mod print;
 mod scroll;
 mod update;
-mod util;
+mod compose;
 
 pub struct Pager {
     config: Config,
