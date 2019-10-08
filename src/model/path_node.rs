@@ -1,6 +1,5 @@
-use crate::model::config::Config;
+use crate::model::compare_functions::PathNodeCompare;
 use crate::model::tree_index::TreeIndex;
-use std::cmp::Ordering;
 use std::fs::canonicalize;
 use std::path::PathBuf;
 
@@ -10,43 +9,16 @@ pub struct PathNode {
     pub is_dir: bool,
     pub is_expanded: bool,
     pub path: PathBuf,
-
-    sort_with_compare: fn(&PathNode, &PathNode) -> Ordering,
 }
 
 impl PathNode {
-    fn sort_with_compare_dirs_top_simple(a: &PathNode, b: &PathNode) -> Ordering {
-        if a.is_dir && !b.is_dir {
-            return std::cmp::Ordering::Less;
-        } else if !a.is_dir && b.is_dir {
-            return std::cmp::Ordering::Greater;
-        }
-
-        a.display_text.cmp(&b.display_text)
-    }
-
-    fn sort_with_compare_dirs_bot_simple(a: &PathNode, b: &PathNode) -> Ordering {
-        Self::sort_with_compare_dirs_top_simple(b, a)
-    }
-
-    // TODO: why not "new", why config as a reference?
-    // TODO: config as a parameter is only needed for 'sort_with_compare', which should
-    //       not be a field of the path_node but a parameter of expand_dir
-    pub fn from_config(config: &Config) -> Self {
-        let sort_with_compare: fn(&PathNode, &PathNode) -> Ordering = match config.behavior.path_node_sort.as_str() {
-            "dirs_bot_simple" => Self::sort_with_compare_dirs_bot_simple,
-            "dirs_top_simple" => Self::sort_with_compare_dirs_top_simple,
-            "none" => |_, _| Ordering::Equal,
-            _ => |_, _| Ordering::Equal,
-        };
-
+    pub fn new(working_dir: &str) -> Self {
         Self {
             children: Vec::new(),
-            display_text: config.setup.working_dir.clone(),
+            display_text: String::from(working_dir),
             is_dir: true,
             is_expanded: false,
-            path: PathBuf::from(config.setup.working_dir.clone()),
-            sort_with_compare,
+            path: PathBuf::from(working_dir),
         }
     }
 
@@ -57,9 +29,8 @@ impl PathNode {
 
     // TODO: errors when accessing a dir with insufficient permissios
     //       eg. /lost+found
-    // TODO: why not a class method?
-    fn list_path_node_children(path_node: &PathNode) -> Vec<PathNode> {
-        let dirs = path_node.path.read_dir().unwrap();
+    fn list_path_node_children(&self, compare: PathNodeCompare) -> Vec<PathNode> {
+        let dirs = self.path.read_dir().unwrap();
 
         let mut path_nodes = dirs
             .map(|dir_entry| {
@@ -71,17 +42,16 @@ impl PathNode {
                     is_dir: dir_entry.path().is_dir(),
                     is_expanded: false,
                     path: dir_entry.path(),
-                    sort_with_compare: path_node.sort_with_compare,
                 }
             })
             .collect::<Vec<PathNode>>();
 
-        path_nodes.sort_unstable_by(path_node.sort_with_compare);
+        path_nodes.sort_unstable_by(compare);
 
         path_nodes
     }
 
-    pub fn expand_dir(&mut self, tree_index: &TreeIndex) {
+    pub fn expand_dir(&mut self, tree_index: &TreeIndex, compare: PathNodeCompare) {
         let mut path_node = self;
         for i in &tree_index.index {
             path_node = &mut path_node.children[*i];
@@ -92,7 +62,7 @@ impl PathNode {
         }
 
         path_node.is_expanded = true;
-        path_node.children = Self::list_path_node_children(&path_node);
+        path_node.children = path_node.list_path_node_children(compare);
     }
 
     pub fn reduce_dir(&mut self, tree_index: &TreeIndex) {

@@ -1,11 +1,13 @@
-use std::sync::mpsc::sync_channel;
-use crate::model::config::Config;
 use crate::controller::event::Event;
 use crate::controller::key_event_handler::KeyEventHandler;
 use crate::controller::resize_event_handler::ResizeEventHandler;
-use crate::view::Pager;
+use crate::model::compare_functions::PathNodeCompare;
+use crate::model::config::Config;
 use crate::model::path_node::PathNode;
 use crate::model::tree_index::TreeIndex;
+use crate::view::Pager;
+use std::cmp::Ordering;
+use std::sync::mpsc::sync_channel;
 use std::sync::mpsc::Receiver;
 use std::sync::mpsc::SyncSender;
 use std::thread;
@@ -19,6 +21,7 @@ pub struct EventQueue {
     config: Config,
     pager: Pager,
     path_node: PathNode,
+    path_node_compare: PathNodeCompare,
     queue_receiver: Receiver<Event>,
     queue_sender: SyncSender<Event>,
 
@@ -30,8 +33,9 @@ impl EventQueue {
     pub fn new(config: Config) -> Self {
         let (queue_sender, queue_receiver): (SyncSender<Event>, Receiver<Event>) = sync_channel(1024);
 
-        let mut path_node = PathNode::from_config(&config);
-        path_node.expand_dir(&TreeIndex::new(Vec::new()));
+        let mut path_node = PathNode::new(&config.setup.working_dir);
+        let path_node_compare = Self::get_path_node_compare(&config);
+        path_node.expand_dir(&TreeIndex::new(Vec::new()), path_node_compare);
 
         let mut pager = Pager::new(config.clone());
         let text_entries = pager.compose_path_node(&path_node);
@@ -41,6 +45,7 @@ impl EventQueue {
             config,
             pager,
             path_node,
+            path_node_compare,
             queue_receiver,
             queue_sender,
             text_entries,
@@ -94,7 +99,7 @@ impl EventQueue {
             }
             Key::Right => {
                 let tree_index = self.path_node.flat_index_to_tree_index(self.pager.cursor_row as usize);
-                self.path_node.expand_dir(&tree_index);
+                self.path_node.expand_dir(&tree_index, self.path_node_compare);
                 self.text_entries = self.pager.compose_path_node(&self.path_node);
 
                 print!("{}", termion::clear::All);
@@ -118,14 +123,15 @@ impl EventQueue {
                 let child_node = self.path_node.get_child_path_node(&tree_index);
 
                 if !child_node.is_dir {
-                    Self::perform_file_action(&self.config, &child_node.get_absolute_path());
+                    self.perform_file_action(&child_node.get_absolute_path());
                 }
                 Some(())
             }
             Key::Char('r') => {
                 // TODO: this simply resets the tree, implement a recursive method
-                self.path_node = PathNode::from_config(&self.config);
-                self.path_node.expand_dir(&TreeIndex::new(Vec::new()));
+                self.path_node = PathNode::new(&self.config.setup.working_dir);
+                self.path_node
+                    .expand_dir(&TreeIndex::new(Vec::new()), self.path_node_compare);
                 self.text_entries = self.pager.compose_path_node(&self.path_node);
 
                 print!("{}", termion::clear::All);
@@ -137,8 +143,19 @@ impl EventQueue {
         }
     }
 
-    fn perform_file_action(config: &Config, file_path: &str) {
-        let file_action_replaced = config.behavior.file_action.replace("%s", file_path);
+    pub fn get_path_node_compare(config: &Config) -> PathNodeCompare {
+        let path_node_compare: fn(&PathNode, &PathNode) -> Ordering = match config.behavior.path_node_sort.as_str() {
+            "dirs_bot_simple" => PathNode::compare_dirs_bot_simple,
+            "dirs_top_simple" => PathNode::compare_dirs_top_simple,
+            "none" => |_, _| Ordering::Equal,
+            _ => |_, _| Ordering::Equal,
+        };
+
+        path_node_compare
+    }
+
+    fn perform_file_action(&self, file_path: &str) {
+        let file_action_replaced = self.config.behavior.file_action.replace("%s", file_path);
         let mut file_action_split = file_action_replaced.split_whitespace();
 
         let program = file_action_split.next().unwrap();
@@ -148,7 +165,7 @@ impl EventQueue {
             .spawn()
             .is_err()
         {
-            println!("failed executing '{}'", config.behavior.file_action);
+            println!("failed executing '{}'", self.config.behavior.file_action);
         }
     }
 }
