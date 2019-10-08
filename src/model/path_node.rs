@@ -5,11 +5,11 @@ use std::fs::canonicalize;
 use std::path::PathBuf;
 
 pub struct PathNode {
-    children: Vec<PathNode>,
-    display_text: String,
+    pub children: Vec<PathNode>,
+    pub display_text: String,
     pub is_dir: bool,
-    is_expanded: bool,
-    path: PathBuf,
+    pub is_expanded: bool,
+    pub path: PathBuf,
 
     sort_with_compare: fn(&PathNode, &PathNode) -> Ordering,
 }
@@ -53,76 +53,6 @@ impl PathNode {
     pub fn get_absolute_path(&self) -> String {
         let canonicalized_path = canonicalize(self.path.as_path()).unwrap();
         canonicalized_path.to_str().unwrap().to_string()
-    }
-
-    fn get_dir_prefix(&self, config: &Config) -> String {
-        let expanded_char = if config.composition.use_utf8 {
-            '▼'
-        } else {
-            'v'
-        };
-
-        let reduced_char = if config.composition.use_utf8 {
-            '▶'
-        } else {
-            '>'
-        };
-        
-        let expanded_indicator = if self.is_expanded { expanded_char } else { reduced_char };
-
-        if self.is_dir {
-            format!("{} ", expanded_indicator)
-        } else {
-            String::from("  ")
-        }
-    }
-
-    fn get_dir_suffix(&self, _config: &Config) -> String {
-        if self.is_dir {
-            String::from("/")
-        } else {
-            String::from("")
-        }
-    }
-
-    fn get_indent(&self, config: &Config, depth: usize) -> String {
-        let indent_char = if !config.composition.show_indent {
-            ' '
-        } else if config.composition.use_utf8 {
-            '·'
-        } else {
-            '-'
-        };
-        
-        let indent = " ".repeat(config.composition.indent as usize - 1);
-
-        format!("{}{}", indent_char, indent).repeat(depth)
-    }
-
-    fn prettify_rec(&self, config: &Config, texts: &mut Vec<String>, depth: usize) {
-        for child in &self.children {
-            let dir_prefix = child.get_dir_prefix(config);
-            let dir_suffix = child.get_dir_suffix(config);
-            let indent = child.get_indent(config, depth);
-
-            let text = format!(
-                "{}{}{}{}",
-                indent,
-                dir_prefix,
-                child.display_text.clone(),
-                dir_suffix,
-            );
-            texts.push(text);
-            child.prettify_rec(config, texts, depth + 1);
-        }
-    }
-
-    pub fn prettify(&self, config: &Config) -> Vec<String> {
-        let mut result = Vec::new();
-
-        self.prettify_rec(config, &mut result, 0);
-
-        result
     }
 
     // TODO: errors when accessing a dir with insufficient permissios

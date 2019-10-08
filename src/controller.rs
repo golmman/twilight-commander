@@ -32,9 +32,9 @@ impl EventQueue {
 
         let mut path_node = PathNode::from_config(&config);
         path_node.expand_dir(&TreeIndex::new(Vec::new()));
-        let text_entries = path_node.prettify(&config);
 
         let mut pager = Pager::new(config.clone());
+        let text_entries = pager.compose_path_node(&path_node);
         pager.update(0, &text_entries, path_node.get_absolute_path());
 
         Self {
@@ -95,7 +95,7 @@ impl EventQueue {
             Key::Right => {
                 let tree_index = self.path_node.flat_index_to_tree_index(self.pager.cursor_row as usize);
                 self.path_node.expand_dir(&tree_index);
-                self.text_entries = self.path_node.prettify(&self.config);
+                self.text_entries = self.pager.compose_path_node(&self.path_node);
 
                 print!("{}", termion::clear::All);
                 self.pager
@@ -105,7 +105,7 @@ impl EventQueue {
             Key::Left => {
                 let tree_index = self.path_node.flat_index_to_tree_index(self.pager.cursor_row as usize);
                 self.path_node.reduce_dir(&tree_index);
-                self.text_entries = self.path_node.prettify(&self.config);
+                self.text_entries = self.pager.compose_path_node(&self.path_node);
 
                 print!("{}", termion::clear::All);
                 self.pager
@@ -126,7 +126,7 @@ impl EventQueue {
                 // TODO: this simply resets the tree, implement a recursive method
                 self.path_node = PathNode::from_config(&self.config);
                 self.path_node.expand_dir(&TreeIndex::new(Vec::new()));
-                self.text_entries = self.path_node.prettify(&self.config);
+                self.text_entries = self.pager.compose_path_node(&self.path_node);
 
                 print!("{}", termion::clear::All);
                 self.pager
@@ -151,65 +151,4 @@ impl EventQueue {
             println!("failed executing '{}'", config.behavior.file_action);
         }
     }
-
-    // fn match_key_event(&self, key: Key) -> Option<()> {
-    //     match key {
-    //         Key::Char('q') => None,
-    //         Key::Up => {
-    //             print!("{}", termion::clear::All);
-    //             pager.update(-1, &text_entries, path_node.get_absolute_path());
-    //             stdout.flush().unwrap();
-    //             Some(())
-    //         }
-    //         Key::Down => {
-    //             print!("{}", termion::clear::All);
-    //             pager.update(1, &text_entries, path_node.get_absolute_path());
-    //             stdout.flush().unwrap();
-    //             Some(())
-    //         }
-    //         Key::Right => {
-    //             let tree_index = path_node.flat_index_to_tree_index(pager.cursor_row as usize);
-    //             path_node.expand_dir(&tree_index);
-    //             text_entries = path_node.prettify();
-
-    //             print!("{}", termion::clear::All);
-    //             pager.update(0, &text_entries, path_node.get_absolute_path());
-    //             stdout.flush().unwrap();
-    //             Some(())
-    //         }
-    //         Key::Left => {
-    //             let tree_index = path_node.flat_index_to_tree_index(pager.cursor_row as usize);
-    //             path_node.reduce_dir(&tree_index);
-    //             text_entries = path_node.prettify();
-
-    //             print!("{}", termion::clear::All);
-    //             pager.update(0, &text_entries, path_node.get_absolute_path());
-    //             stdout.flush().unwrap();
-    //             Some(())
-    //         }
-    //         Key::Char('\u{0A}') => {
-    //             let tree_index = path_node.flat_index_to_tree_index(pager.cursor_row as usize);
-
-    //             let child_node = path_node.get_child_path_node(&tree_index);
-
-    //             if !child_node.is_dir {
-    //                 perform_file_action(&config, &child_node.get_absolute_path());
-    //             }
-    //             Some(())
-    //         }
-    //         Key::Char('r') => {
-    //             // TODO: this simply resets the tree, implement a recursive method
-    //             path_node = PathNode::from_config(&config);
-    //             path_node.expand_dir(&TreeIndex::new(Vec::new()));
-    //             text_entries = path_node.prettify();
-
-    //             print!("{}", termion::clear::All);
-    //             pager.update(0, &text_entries, path_node.get_absolute_path());
-    //             stdout.flush().unwrap();
-
-    //             Some(())
-    //         }
-    //         _ => Some(()),
-    //     }
-    // }
 }
