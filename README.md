@@ -3,18 +3,30 @@
 [![Build Status](https://travis-ci.org/golmman/twilight-commander.svg?branch=master)](https://travis-ci.org/golmman/twilight-commander)
 
 A simple console tree file explorer for linux, similiar to NERDTree but independent of vim.
-Tested in Ubuntu 18.04.
+Developed and tested on Ubuntu 18.04 with xterm derivatives.
+
+## Build and install
+
+### Instructions for Debian 10 or Ubuntu 18.04
+
+| |step|description|
+|---|---|---|
+|1.|install rust|https://www.rust-lang.org/tools/install|
+|2.|clone the repository|`git clone https://github.com/golmman/twilight-commander.git`|
+|3.|change to the newly created directory|`cd twilight-commander`|
+|4.|build the project|`cargo build --release`|
+|5.|run the executable|`./target/release/twilight-commander`|
 
 ## Implemented features
 
-### directory entry browsing
+### Directory entry browsing
 * up, down: move cursor
 * left, right: close, open directories
 * return: perform behavior.file_action
 * r: reload
 * q: quit
 
-### configuration
+### Configuration
 The configuration is loaded as follows
 1. load values from ~/.twilight-commander-rc.toml
 2. fill missing values with app defaults
@@ -29,25 +41,25 @@ enabled = true
 ```
 is set with the option `--debug.enabled=true`.
 
-### directory entry management
+### Directory entry management
 The command line option / config value `--behavior.file_action` defines the action taken when the return key is pressed on a file. It defaults to [true](https://en.wikipedia.org/wiki/True_and_false_(commands)), which does (almost) nothing.
 
-### scrolling modes
+### Scrolling modes
 Specified with the option `--behaviour.scrolling` (default = `center`)
 
 * `center`: move the cursor until it is in the center, then move the text instead
 * `editor`: move the cursor until it hits the top/bottom boundaries set by the `debug.paddin_top/bot` limits
 
-### utf-8 support
+### Utf-8 support
 In case your terminal does not support utf-8 you can disable it with `--composition.use_utf8=false`.
 
-## Upcoming improvements
+## Ideas for improvements
 * **configurable key bindings**
 * **advanced navigation**
   * jump to parent directory
   * skip x entries by holding a modifier key
   * collapse the current parent directory
-* better response to terminal resize events: response is too slow, text is wrapped the truncated
+* better response to terminal resize events: response is too slow, text is wrapped
   * intended to work like `less -S <filename>`
   * problem seems not to appear in plain xterm
   * https://www.xfree86.org/4.8.0/ctlseqs.html
@@ -72,4 +84,3 @@ In case your terminal does not support utf-8 you can disable it with `--composit
 * search
   * case insensitive wildcard
   * mark hits
-

@@ -4,10 +4,10 @@ use std::io::Write;
 use termion::raw::IntoRawMode;
 use termion::raw::RawTerminal;
 
+mod compose;
 mod print;
 mod scroll;
 mod update;
-mod compose;
 
 pub struct Pager {
     config: Config,

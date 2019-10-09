@@ -1,13 +1,13 @@
 extern crate termion;
 extern crate toml;
 
-use model::config::Config;
 use controller::EventQueue;
+use model::config::Config;
 
 mod controller;
-mod view;
 mod model;
 mod utils;
+mod view;
 
 fn main() {
     let config = Config::new();
