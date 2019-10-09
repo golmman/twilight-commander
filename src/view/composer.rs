@@ -1,13 +1,21 @@
+use crate::model::config::Config;
 use crate::model::path_node::PathNode;
-use crate::view::Pager;
 
-impl Pager {
-    pub fn shorten_string_to_terminal_cols(&self, string: &str) -> String {
-        if self.terminal_cols > string.len() as i32 {
+pub struct Composer {
+    config: Config,
+}
+
+impl Composer {
+    pub fn new(config: Config) -> Self {
+        Self { config }
+    }
+
+    pub fn truncate_string(&self, string: &str, length: usize) -> String {
+        if length > string.len() {
             return String::from(string);
         }
 
-        let split_at = self.terminal_cols - 1;
+        let split_at = length - 1;
         let mut shortened = String::from(string.split_at(split_at as usize).0);
 
         shortened.push('~');

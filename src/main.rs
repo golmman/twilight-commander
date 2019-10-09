@@ -11,7 +11,7 @@ mod view;
 
 fn main() {
     let config = Config::new();
-    let mut event_queue = EventQueue::new(config);
 
+    let mut event_queue = EventQueue::new(config);
     event_queue.handle_messages();
 }

@@ -5,49 +5,47 @@ pub mod tree_index;
 
 #[cfg(test)]
 mod tests {
-    use crate::controller::EventQueue;
     use crate::model::config::Config;
     use crate::model::path_node::PathNode;
     use crate::model::tree_index::TreeIndex;
-    use crate::view::Pager;
+    use crate::view::composer::Composer;
 
     #[test]
     fn test_integration_with_path_node_sort_dirs_top_simple() {
         let mut config = Config::new();
         config.setup.working_dir = String::from("./tests/test_dirs");
-        config.behavior.path_node_sort = String::from("dirs_top_simple");
 
-        let pager = Pager::new(config.clone());
+        let composer = Composer::new(config.clone());
         let mut path_node = PathNode::new(&config.setup.working_dir);
-        let path_node_compare = EventQueue::get_path_node_compare(&config);
-        assert_eq!(0, pager.compose_path_node(&path_node).len());
+        let path_node_compare = PathNode::compare_dirs_top_simple;
+        assert_eq!(0, composer.compose_path_node(&path_node).len());
 
         // expand_dir
         path_node.expand_dir(&TreeIndex::new(Vec::new()), path_node_compare);
         assert_eq!(
             13,
-            pager.compose_path_node(&path_node).len(),
+            composer.compose_path_node(&path_node).len(),
             "expanding the root directory"
         );
 
         path_node.expand_dir(&TreeIndex::new(vec![3]), path_node_compare);
         assert_eq!(
             13,
-            pager.compose_path_node(&path_node).len(),
+            composer.compose_path_node(&path_node).len(),
             "expanding a file does nothing"
         );
 
         path_node.expand_dir(&TreeIndex::new(vec![1]), path_node_compare);
-        assert_eq!(17, pager.compose_path_node(&path_node).len());
+        assert_eq!(17, composer.compose_path_node(&path_node).len());
 
         path_node.expand_dir(&TreeIndex::new(vec![1, 0]), path_node_compare);
-        assert_eq!(23, pager.compose_path_node(&path_node).len());
+        assert_eq!(23, composer.compose_path_node(&path_node).len());
 
         path_node.expand_dir(&TreeIndex::new(vec![1, 0, 2]), path_node_compare);
-        assert_eq!(26, pager.compose_path_node(&path_node).len());
+        assert_eq!(26, composer.compose_path_node(&path_node).len());
 
         path_node.expand_dir(&TreeIndex::new(vec![1, 0, 2, 1]), path_node_compare);
-        assert_eq!(29, pager.compose_path_node(&path_node).len());
+        assert_eq!(29, composer.compose_path_node(&path_node).len());
 
         // tree_index_to_flat_index
         let flat_index = TreeIndex::new(vec![7, 2, 4, 0, 0]).tree_index_to_flat_index();
@@ -70,14 +68,14 @@ mod tests {
         path_node.reduce_dir(&TreeIndex::new(vec![1, 0, 2, 1]));
         assert_eq!(
             26,
-            pager.compose_path_node(&path_node).len(),
+            composer.compose_path_node(&path_node).len(),
             "reducing the last opened dir"
         );
 
         path_node.reduce_dir(&TreeIndex::new(vec![1, 0]));
         assert_eq!(
             17,
-            pager.compose_path_node(&path_node).len(),
+            composer.compose_path_node(&path_node).len(),
             "reducing lots of sub dirs"
         );
     }
@@ -86,52 +84,51 @@ mod tests {
     fn test_integration_with_path_node_sort_dirs_bot_simple() {
         let mut config = Config::new();
         config.setup.working_dir = String::from("./tests/test_dirs");
-        config.behavior.path_node_sort = String::from("dirs_bot_simple");
 
-        let pager = Pager::new(config.clone());
+        let composer = Composer::new(config.clone());
         let mut path_node = PathNode::new(&config.setup.working_dir);
-        let path_node_compare = EventQueue::get_path_node_compare(&config);
-        assert_eq!(0, pager.compose_path_node(&path_node).len());
+        let path_node_compare = PathNode::compare_dirs_bot_simple;
+        assert_eq!(0, composer.compose_path_node(&path_node).len());
 
         // expand_dir
         path_node.expand_dir(&TreeIndex::new(Vec::new()), path_node_compare);
         assert_eq!(
             13,
-            pager.compose_path_node(&path_node).len(),
+            composer.compose_path_node(&path_node).len(),
             "expanding the root directory"
         );
 
         path_node.expand_dir(&TreeIndex::new(vec![3]), path_node_compare);
         assert_eq!(
             13,
-            pager.compose_path_node(&path_node).len(),
+            composer.compose_path_node(&path_node).len(),
             "expanding a file does nothing"
         );
 
         path_node.expand_dir(&TreeIndex::new(vec![11]), path_node_compare);
-        assert_eq!(17, pager.compose_path_node(&path_node).len());
+        assert_eq!(17, composer.compose_path_node(&path_node).len());
 
         path_node.expand_dir(&TreeIndex::new(vec![11, 3]), path_node_compare);
-        assert_eq!(23, pager.compose_path_node(&path_node).len());
+        assert_eq!(23, composer.compose_path_node(&path_node).len());
 
         path_node.expand_dir(&TreeIndex::new(vec![11, 3, 3]), path_node_compare);
-        assert_eq!(26, pager.compose_path_node(&path_node).len());
+        assert_eq!(26, composer.compose_path_node(&path_node).len());
 
         path_node.expand_dir(&TreeIndex::new(vec![11, 3, 3, 1]), path_node_compare);
-        assert_eq!(29, pager.compose_path_node(&path_node).len());
+        assert_eq!(29, composer.compose_path_node(&path_node).len());
 
         // reduce_dir
         path_node.reduce_dir(&TreeIndex::new(vec![11, 3, 3, 1]));
         assert_eq!(
             26,
-            pager.compose_path_node(&path_node).len(),
+            composer.compose_path_node(&path_node).len(),
             "reducing the last opened dir"
         );
 
         path_node.reduce_dir(&TreeIndex::new(vec![11, 3]));
         assert_eq!(
             17,
-            pager.compose_path_node(&path_node).len(),
+            composer.compose_path_node(&path_node).len(),
             "reducing lots of sub dirs"
         );
     }

@@ -25,7 +25,7 @@ pub struct EventQueue {
     queue_receiver: Receiver<Event>,
     queue_sender: SyncSender<Event>,
 
-    // TODO: should be part of the model
+    // TODO: should be part of the view
     text_entries: Vec<String>,
 }
 
@@ -38,7 +38,7 @@ impl EventQueue {
         path_node.expand_dir(&TreeIndex::new(Vec::new()), path_node_compare);
 
         let mut pager = Pager::new(config.clone());
-        let text_entries = pager.compose_path_node(&path_node);
+        let text_entries = pager.composer.compose_path_node(&path_node);
         pager.update(0, &text_entries, path_node.get_absolute_path());
 
         Self {
@@ -59,15 +59,7 @@ impl EventQueue {
         thread::spawn(move || ResizeEventHandler::handle(sender2));
 
         while let Some(_) = self.match_event(self.queue_receiver.recv().unwrap()) {}
-
         // TODO: add a channel to shut down the threads?
-
-        print!(
-            "{}{}{}",
-            termion::clear::All,
-            termion::cursor::Goto(1, 1),
-            termion::cursor::Show,
-        );
     }
 
     fn match_event(&mut self, event: Event) -> Option<()> {
@@ -100,7 +92,7 @@ impl EventQueue {
             Key::Right => {
                 let tree_index = self.path_node.flat_index_to_tree_index(self.pager.cursor_row as usize);
                 self.path_node.expand_dir(&tree_index, self.path_node_compare);
-                self.text_entries = self.pager.compose_path_node(&self.path_node);
+                self.text_entries = self.pager.composer.compose_path_node(&self.path_node);
 
                 print!("{}", termion::clear::All);
                 self.pager
@@ -110,7 +102,7 @@ impl EventQueue {
             Key::Left => {
                 let tree_index = self.path_node.flat_index_to_tree_index(self.pager.cursor_row as usize);
                 self.path_node.reduce_dir(&tree_index);
-                self.text_entries = self.pager.compose_path_node(&self.path_node);
+                self.text_entries = self.pager.composer.compose_path_node(&self.path_node);
 
                 print!("{}", termion::clear::All);
                 self.pager
@@ -132,7 +124,7 @@ impl EventQueue {
                 self.path_node = PathNode::new(&self.config.setup.working_dir);
                 self.path_node
                     .expand_dir(&TreeIndex::new(Vec::new()), self.path_node_compare);
-                self.text_entries = self.pager.compose_path_node(&self.path_node);
+                self.text_entries = self.pager.composer.compose_path_node(&self.path_node);
 
                 print!("{}", termion::clear::All);
                 self.pager
