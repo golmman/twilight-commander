@@ -42,7 +42,26 @@ enabled = true
 is set with the option `--debug.enabled=true`.
 
 ### Directory entry management
-The command line option / config value `--behavior.file_action` defines the action taken when the return key is pressed on a file. It defaults to [true](https://en.wikipedia.org/wiki/True_and_false_(commands)), which does (almost) nothing.
+
+#### File Action
+The command line option / config value `--behavior.file_action` defines the action taken when the return key is pressed
+on a file. The action is interpreted by `bash` and any occurence of `%s` will be replaced by the selected filename.  
+E.g. when enter is pressed on the file `.bashrc` in a twilight-commander process created with
+```
+twilight-commander "--behavior.file_action=xterm -e 'cat %s; echo opened file: %s; bash'"
+```
+then
+```
+bash -c "xterm -e 'cat %s; echo opened file: %s; bash'"
+```
+is executed, i.e.:
+* a new xterm window is opened
+* where the selected file (`.bashrc`) is printed to stdout
+* then `opened file: ~/.bashrc` is printed
+* `bash` prevents the window from closing.
+
+`--behavior.file_action` defaults to [true](https://en.wikipedia.org/wiki/True_and_false_(commands)), which does
+(almost) nothing.
 
 ### Scrolling modes
 Specified with the option `--behaviour.scrolling` (default = `center`)

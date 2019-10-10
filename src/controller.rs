@@ -148,16 +148,11 @@ impl EventQueue {
 
     fn perform_file_action(&self, file_path: &str) {
         let file_action_replaced = self.config.behavior.file_action.replace("%s", file_path);
-        let mut file_action_split = file_action_replaced.split_whitespace();
 
-        let program = file_action_split.next().unwrap();
-
-        if std::process::Command::new(program)
-            .args(file_action_split)
+        std::process::Command::new("bash")
+            .arg("-c")
+            .arg(file_action_replaced)
             .spawn()
-            .is_err()
-        {
-            println!("failed executing '{}'", self.config.behavior.file_action);
-        }
+            .unwrap();
     }
 }

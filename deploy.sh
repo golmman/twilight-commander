@@ -12,6 +12,12 @@ if [[ -n $(git status -s) ]]; then
     exit 1
 fi
 
+echo 'DEPLOY: Checking for version change...'
+if [[ -z "$(git show --name-status | grep 'Cargo.toml')" ]]; then
+    echo 'DEPLOY: The last commit did not contain a change to Cargo.toml. Please commit a version change.'
+    exit 1
+fi
+
 echo 'DEPLOY: cleaning project...'
 if ! cargo clean --package twilight-commander ; then
     echo 'DEPLOY: An error occurred.'
