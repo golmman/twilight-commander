@@ -19,13 +19,6 @@ Developed and tested on Ubuntu 18.04 with xterm derivatives.
 
 ## Implemented features
 
-### Directory entry browsing
-* up, down: move cursor
-* left, right: close, open directories
-* return: perform behavior.file_action
-* r: reload
-* q: quit
-
 ### Configuration
 The configuration is loaded as follows
 1. load values from ~/.twilight-commander-rc.toml
@@ -40,6 +33,13 @@ E.g.
 enabled = true
 ```
 is set with the option `--debug.enabled=true`.
+
+### Directory entry browsing
+* up, down: move cursor
+* left, right: close, open directories
+* return: perform behavior.file_action
+* r: reload
+* q: quit
 
 ### Directory entry management
 
@@ -78,7 +78,7 @@ In case your terminal does not support utf-8 you can disable it with `--composit
   * jump to parent directory
   * skip x entries by holding a modifier key
   * collapse the current parent directory
-* better response to terminal resize events: response is too slow, text is wrapped
+* better response to terminal resize events: in some terminals response is too slow, text is wrapped
   * intended to work like `less -S <filename>`
   * problem seems not to appear in plain xterm
   * https://www.xfree86.org/4.8.0/ctlseqs.html

@@ -10,7 +10,7 @@ impl Composer {
         Self { config }
     }
 
-    pub fn truncate_string(&self, string: &str, length: usize) -> String {
+    pub fn truncate_string(string: &str, length: usize) -> String {
         if length > string.len() {
             return String::from(string);
         }

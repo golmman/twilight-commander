@@ -5,6 +5,7 @@ use crate::model::compare_functions::PathNodeCompare;
 use crate::model::config::Config;
 use crate::model::path_node::PathNode;
 use crate::model::tree_index::TreeIndex;
+use crate::view::composer::Composer;
 use crate::view::Pager;
 use std::cmp::Ordering;
 use std::sync::mpsc::sync_channel;
@@ -19,13 +20,14 @@ mod resize_event_handler;
 
 pub struct EventQueue {
     config: Config,
+    composer: Composer,
     pager: Pager,
     path_node: PathNode,
     path_node_compare: PathNodeCompare,
     queue_receiver: Receiver<Event>,
     queue_sender: SyncSender<Event>,
 
-    // TODO: should be part of the view
+    // TODO: should be part of the view?
     text_entries: Vec<String>,
 }
 
@@ -33,16 +35,22 @@ impl EventQueue {
     pub fn new(config: Config) -> Self {
         let (queue_sender, queue_receiver): (SyncSender<Event>, Receiver<Event>) = sync_channel(1024);
 
+        let config_composer = config.clone();
+        let config_pager = config.clone();
+
         let mut path_node = PathNode::new(&config.setup.working_dir);
         let path_node_compare = Self::get_path_node_compare(&config);
         path_node.expand_dir(&TreeIndex::new(Vec::new()), path_node_compare);
 
-        let mut pager = Pager::new(config.clone());
-        let text_entries = pager.composer.compose_path_node(&path_node);
+        let mut pager = Pager::new(config_pager);
+        let composer = Composer::new(config_composer);
+
+        let text_entries = composer.compose_path_node(&path_node);
         pager.update(0, &text_entries, path_node.get_absolute_path());
 
         Self {
             config,
+            composer,
             pager,
             path_node,
             path_node_compare,
@@ -92,7 +100,7 @@ impl EventQueue {
             Key::Right => {
                 let tree_index = self.path_node.flat_index_to_tree_index(self.pager.cursor_row as usize);
                 self.path_node.expand_dir(&tree_index, self.path_node_compare);
-                self.text_entries = self.pager.composer.compose_path_node(&self.path_node);
+                self.text_entries = self.composer.compose_path_node(&self.path_node);
 
                 print!("{}", termion::clear::All);
                 self.pager
@@ -102,7 +110,7 @@ impl EventQueue {
             Key::Left => {
                 let tree_index = self.path_node.flat_index_to_tree_index(self.pager.cursor_row as usize);
                 self.path_node.reduce_dir(&tree_index);
-                self.text_entries = self.pager.composer.compose_path_node(&self.path_node);
+                self.text_entries = self.composer.compose_path_node(&self.path_node);
 
                 print!("{}", termion::clear::All);
                 self.pager
@@ -124,7 +132,7 @@ impl EventQueue {
                 self.path_node = PathNode::new(&self.config.setup.working_dir);
                 self.path_node
                     .expand_dir(&TreeIndex::new(Vec::new()), self.path_node_compare);
-                self.text_entries = self.pager.composer.compose_path_node(&self.path_node);
+                self.text_entries = self.composer.compose_path_node(&self.path_node);
 
                 print!("{}", termion::clear::All);
                 self.pager

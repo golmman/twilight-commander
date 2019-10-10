@@ -11,7 +11,6 @@ mod update;
 
 pub struct Pager {
     config: Config,
-    pub composer: Composer,
     pub cursor_row: i32,
     pub stdout: RawTerminal<std::io::Stdout>,
     terminal_cols: i32,
@@ -21,9 +20,6 @@ pub struct Pager {
 
 impl Pager {
     pub fn new(config: Config) -> Self {
-        let composer_config = config.clone();
-        let pager_config = config.clone();
-
         // Should be used with caution in tests as cargo seems to initialize its own conflicting "raw mode"
         let stdout = stdout().into_raw_mode().unwrap();
 
@@ -35,8 +31,7 @@ impl Pager {
         );
 
         Self {
-            config: pager_config,
-            composer: Composer::new(composer_config),
+            config,
             cursor_row: 0,
             stdout,
             terminal_cols: 0,

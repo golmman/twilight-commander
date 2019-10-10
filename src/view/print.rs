@@ -1,3 +1,4 @@
+use crate::view::Composer;
 use crate::view::Pager;
 use termion::{color, style};
 
@@ -6,7 +7,7 @@ impl Pager {
         print!(
             "{}{}{}",
             termion::cursor::Goto(1, row as u16),
-            self.composer.truncate_string(text_entry, self.terminal_cols as usize),
+            Composer::truncate_string(text_entry, self.terminal_cols as usize),
             style::Reset
         );
     }
@@ -16,7 +17,7 @@ impl Pager {
             "{}{}{}{}",
             termion::cursor::Goto(1, row as u16),
             color::Bg(color::Blue),
-            self.composer.truncate_string(text_entry, self.terminal_cols as usize),
+            Composer::truncate_string(text_entry, self.terminal_cols as usize),
             style::Reset
         );
     }
@@ -25,7 +26,7 @@ impl Pager {
         print!(
             "{}{}",
             termion::cursor::Goto(1, 1),
-            self.composer.truncate_string(header_text, self.terminal_cols as usize),
+            Composer::truncate_string(header_text, self.terminal_cols as usize),
         );
     }
 
