@@ -2,7 +2,7 @@ use crate::view::Pager;
 use std::io::Write;
 use termion::terminal_size;
 
-impl Pager {
+impl<W: Write> Pager<W> {
     fn update_terminal_size(&mut self) {
         let (terminal_cols_raw, terminal_rows_raw) = terminal_size().unwrap();
         self.terminal_cols = i32::from(terminal_cols_raw);
@@ -39,6 +39,9 @@ impl Pager {
 
         let first_index = spacing_top - self.text_row;
 
+        // clear screen
+        self.print_clear();
+
         // print rows
         for i in 0..displayable_rows {
             let index = first_index + i;
@@ -57,6 +60,6 @@ impl Pager {
         self.print_header(&header_text);
         self.print_debug_info();
 
-        self.stdout.flush().unwrap();
+        self.flush().unwrap();
     }
 }

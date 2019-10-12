@@ -1,6 +1,7 @@
 use crate::view::Pager;
+use std::io::Write;
 
-impl Pager {
+impl<W: Write> Pager<W> {
     pub fn scroll_like_center(&self, cursor_row_delta: i32, text_entries_len: i32) -> i32 {
         let spacing_bot = self.config.debug.spacing_bot;
         let spacing_top = self.config.debug.spacing_top;
