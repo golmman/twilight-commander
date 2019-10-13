@@ -111,7 +111,7 @@ dependencies = [
 
 [[package]]
 name = "twilight-commander"
-version = "0.10.10"
+version = "0.10.11"
 dependencies = [
  "serde 1.0.101 (registry+https://github.com/rust-lang/crates.io-index)",
  "signal-hook 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)",

@@ -75,6 +75,8 @@ Specified with the option `--behaviour.scrolling` (default = `center`)
 In case your terminal does not support utf-8 you can disable it with `--composition.use_utf8=false`.
 
 ## Ideas for improvements
+* **honor the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)**
+* **add a proper Makefile**
 * **configurable key bindings**
 * **advanced navigation**
   * jump to parent directory
@@ -101,6 +103,8 @@ In case your terminal does not support utf-8 you can disable it with `--composit
 * subdirectory caching
 * improved sorting
 * --help screen with info to all command line options
+  * [clap](https://crates.io/crates/clap)
+  * [gumdrop](https://crates.io/crates/gumdrop)
 * bookmark / pin entries (recursivly?) and prevent them from being collapsed
 * search
   * case insensitive wildcard
