@@ -58,3 +58,164 @@ impl<W: Write> Pager<W> {
         self.text_row
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::model::config::Config;
+    use crate::view::Pager;
+
+    fn prepare_pager() -> Pager<Vec<u8>> {
+        let mut config = Config::default();
+        config.debug.enabled = true;
+        config.debug.padding_bot = 1;
+        config.debug.padding_top = 1;
+        config.debug.spacing_bot = 1;
+        config.debug.spacing_top = 1;
+
+        let out: Vec<u8> = Vec::new();
+        let mut pager = Pager::new(config, out);
+
+        pager.terminal_cols = 100;
+        pager.terminal_rows = 10;
+
+        pager
+    }
+
+    mod scroll_like_center_tests {
+        use super::*;
+
+        #[test]
+        fn scroll_like_center_cursor_top_test() {
+            let text_row = {
+                let pager = prepare_pager();
+                pager.scroll_like_center(1, 17)
+            };
+
+            assert_eq!(1, text_row);
+        }
+
+        #[test]
+        fn scroll_like_center_text_moves_up1_test() {
+            let text_row = {
+                let mut pager = prepare_pager();
+                pager.cursor_row = 5;
+                pager.scroll_like_center(1, 17)
+            };
+
+            assert_eq!(0, text_row);
+        }
+
+        #[test]
+        fn scroll_like_center_text_moves_up2_test() {
+            let text_row = {
+                let mut pager = prepare_pager();
+                pager.cursor_row = 6;
+                pager.scroll_like_center(1, 17)
+            };
+
+            assert_eq!(-1, text_row);
+        }
+
+        #[test]
+        fn scroll_like_center_text_moves_down_test() {
+            let text_row = {
+                let mut pager = prepare_pager();
+                pager.cursor_row = 6;
+                pager.scroll_like_center(-1, 17)
+            };
+
+            assert_eq!(0, text_row);
+        }
+
+        #[test]
+        fn scroll_like_center_cursor_bot_test() {
+            let text_row = {
+                let mut pager = prepare_pager();
+                pager.cursor_row = 9;
+                pager.scroll_like_center(-1, 17)
+            };
+
+            assert_eq!(-1, text_row);
+        }
+
+        #[test]
+        fn scroll_like_center_cursor_bot_no_delta_test() {
+            let text_row = {
+                let mut pager = prepare_pager();
+                pager.cursor_row = 9;
+                pager.scroll_like_center(0, 17)
+            };
+
+            assert_eq!(-4, text_row);
+        }
+    }
+
+    mod scroll_like_editor_tests {
+        use super::*;
+
+        #[test]
+        fn scroll_like_editor_cursor_top_test() {
+            let text_row = {
+                let pager = prepare_pager();
+                pager.scroll_like_editor()
+            };
+
+            assert_eq!(2, text_row);
+        }
+
+        #[test]
+        fn scroll_like_editor_text_moves_up1_test() {
+            let text_row = {
+                let mut pager = prepare_pager();
+                pager.cursor_row = 5;
+                pager.scroll_like_editor()
+            };
+
+            assert_eq!(0, text_row);
+        }
+
+        #[test]
+        fn scroll_like_editor_text_moves_up2_test() {
+            let text_row = {
+                let mut pager = prepare_pager();
+                pager.cursor_row = 6;
+                pager.scroll_like_editor()
+            };
+
+            assert_eq!(0, text_row);
+        }
+
+        #[test]
+        fn scroll_like_editor_text_moves_down_test() {
+            let text_row = {
+                let mut pager = prepare_pager();
+                pager.cursor_row = 6;
+                pager.scroll_like_editor()
+            };
+
+            assert_eq!(0, text_row);
+        }
+
+        #[test]
+        fn scroll_like_editor_cursor_bot_test() {
+            let text_row = {
+                let mut pager = prepare_pager();
+                pager.cursor_row = 9;
+                pager.scroll_like_editor()
+            };
+
+            assert_eq!(-2, text_row);
+        }
+
+        #[test]
+        fn scroll_like_editor_cursor_bot_no_delta_test() {
+            let text_row = {
+                let mut pager = prepare_pager();
+                pager.cursor_row = 9;
+                pager.scroll_like_editor()
+            };
+
+            assert_eq!(-2, text_row);
+        }
+    }
+}
