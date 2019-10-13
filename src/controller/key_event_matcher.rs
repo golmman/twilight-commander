@@ -5,7 +5,6 @@ use std::io::Write;
 use termion::event::Key;
 
 impl<W: Write> EventQueue<W> {
-
     // TODO: return an action function
     pub fn match_key_event(&mut self, key: Key) -> Option<()> {
         match key {
