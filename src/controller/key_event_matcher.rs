@@ -5,6 +5,8 @@ use std::io::Write;
 use termion::event::Key;
 
 impl<W: Write> EventQueue<W> {
+
+    // TODO: return an action function
     pub fn match_key_event(&mut self, key: Key) -> Option<()> {
         match key {
             Key::Char('q') => None,
@@ -69,5 +71,103 @@ impl<W: Write> EventQueue<W> {
             .arg(file_action_replaced)
             .spawn()
             .unwrap();
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::model::config::Config;
+    use crate::view::composer::Composer;
+    use crate::view::Pager;
+
+    fn prepare_event_queue() -> EventQueue<Vec<u8>> {
+        let config = Config::default();
+
+        let composer = Composer::new(config.clone());
+        let pager = Pager::new(config.clone(), Vec::new());
+        let path_node = PathNode::new(&config.setup.working_dir);
+
+        EventQueue::new(config, composer, pager, path_node)
+    }
+
+    #[test]
+    fn match_key_event_default_test() {
+        let result = {
+            let mut event_queue = prepare_event_queue();
+            event_queue.match_key_event(Key::__IsNotComplete)
+        };
+
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn match_key_event_q_test() {
+        let result = {
+            let mut event_queue = prepare_event_queue();
+            event_queue.match_key_event(Key::Char('q'))
+        };
+
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn match_key_event_r_test() {
+        let result = {
+            let mut event_queue = prepare_event_queue();
+            event_queue.match_key_event(Key::Char('r'))
+        };
+
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn match_key_event_return_test() {
+        let result = {
+            let mut event_queue = prepare_event_queue();
+            event_queue.match_key_event(Key::Char('\u{0A}'))
+        };
+
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn match_key_event_up_test() {
+        let result = {
+            let mut event_queue = prepare_event_queue();
+            event_queue.match_key_event(Key::Up)
+        };
+
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn match_key_event_down_test() {
+        let result = {
+            let mut event_queue = prepare_event_queue();
+            event_queue.match_key_event(Key::Down)
+        };
+
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn match_key_event_left_test() {
+        let result = {
+            let mut event_queue = prepare_event_queue();
+            event_queue.match_key_event(Key::Left)
+        };
+
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn match_key_event_right_test() {
+        let result = {
+            let mut event_queue = prepare_event_queue();
+            event_queue.match_key_event(Key::Right)
+        };
+
+        assert!(result.is_some());
     }
 }

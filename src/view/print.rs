@@ -115,8 +115,8 @@ impl<W: Write> Pager<W> {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use crate::model::config::Config;
-    use crate::view::Pager;
 
     fn prepare_pager() -> Pager<Vec<u8>> {
         let mut config = Config::default();
