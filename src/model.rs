@@ -12,7 +12,7 @@ mod tests {
 
     #[test]
     fn test_integration_with_path_node_sort_dirs_top_simple() {
-        let mut config = Config::new();
+        let mut config = Config::default();
         config.setup.working_dir = String::from("./tests/test_dirs");
 
         let composer = Composer::new(config.clone());
@@ -82,7 +82,7 @@ mod tests {
 
     #[test]
     fn test_integration_with_path_node_sort_dirs_bot_simple() {
-        let mut config = Config::new();
+        let mut config = Config::default();
         config.setup.working_dir = String::from("./tests/test_dirs");
 
         let composer = Composer::new(config.clone());

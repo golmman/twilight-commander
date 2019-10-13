@@ -3,8 +3,6 @@ use crate::view::Pager;
 use std::io::Write;
 use termion::{color, style};
 
-// TODO: replace print! with write! to separate Printer from updater
-//       its also possible to test with a mock stdout
 impl<W: Write> Pager<W> {
     pub fn print_clear(&mut self) {
         write!(self, "{}", termion::clear::All).unwrap();
@@ -112,5 +110,105 @@ impl<W: Write> Pager<W> {
             text_row
         )
         .unwrap();
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::model::config::Config;
+    use crate::view::Pager;
+
+    fn prepare_pager() -> Pager<Vec<u8>> {
+        let mut config = Config::default();
+        config.debug.enabled = true;
+        config.debug.padding_bot = 1;
+        config.debug.padding_top = 1;
+        config.debug.spacing_bot = 1;
+        config.debug.spacing_top = 1;
+
+        let out: Vec<u8> = Vec::new();
+        let mut pager = Pager::new(config, out);
+
+        pager.terminal_cols = 100;
+        pager.terminal_rows = 10;
+
+        pager
+    }
+
+    fn get_result(pager: Pager<Vec<u8>>) -> Option<String> {
+        let pager_out = pager.out.clone();
+        Some(String::from(std::str::from_utf8(&pager_out).unwrap()))
+    }
+
+    #[test]
+    fn print_clear_test() {
+        let result = {
+            let mut pager = prepare_pager();
+            pager.print_clear();
+            get_result(pager)
+        };
+
+        assert_eq!("\u{1b}[?25l\u{1b}[1;1H\u{1b}[2J\u{1b}[2J", result.unwrap());
+    }
+
+    #[test]
+    fn print_text_entry_test() {
+        let result = {
+            let mut pager = prepare_pager();
+            pager.print_text_entry("--- test 123 ---", 42);
+            get_result(pager)
+        };
+
+        assert_eq!(
+            "\u{1b}[?25l\u{1b}[1;1H\u{1b}[2J\u{1b}[42;1H--- test 123 ---\u{1b}[m",
+            result.unwrap(),
+        );
+    }
+
+    #[test]
+    fn print_text_entry_emphasized_test() {
+        let result = {
+            let mut pager = prepare_pager();
+            pager.print_text_entry_emphasized("--- test 123 ---", 42);
+            get_result(pager)
+        };
+
+        assert_eq!(
+            "\u{1b}[?25l\u{1b}[1;1H\u{1b}[2J\u{1b}[42;1H\u{1b}[48;5;4m--- test 123 ---\u{1b}[m",
+            result.unwrap(),
+        );
+    }
+
+    #[test]
+    fn print_header_test() {
+        let result = {
+            let mut pager = prepare_pager();
+            pager.print_header("--- test 123 ---");
+            get_result(pager)
+        };
+
+        assert_eq!(
+            "\u{1b}[?25l\u{1b}[1;1H\u{1b}[2J\u{1b}[1;1H--- test 123 ---",
+            result.unwrap(),
+        );
+    }
+
+    #[test]
+    fn print_debug_info_test() {
+        let result = {
+            let mut pager = prepare_pager();
+            pager.print_debug_info();
+            get_result(pager)
+        }
+        .unwrap();
+
+        assert!(result.contains("~~~ padding_bot"));
+        assert!(result.contains("~~~ padding_top"));
+        assert!(result.contains("--- spacing_bot"));
+        assert!(result.contains("--- spacing_top"));
+        assert!(result.contains("cols: 100"));
+        assert!(result.contains("rows: 10"));
+        assert!(result.contains("cursor_row: 0"));
+        assert!(result.contains("text_row: 0"));
     }
 }

@@ -36,7 +36,7 @@ pub struct Config {
 }
 
 impl Config {
-    fn default() -> Self {
+    pub fn default() -> Self {
         Self {
             behavior: Behavior::default(),
             color: Color::default(),
