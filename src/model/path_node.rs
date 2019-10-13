@@ -65,7 +65,7 @@ impl PathNode {
         path_node.children = path_node.list_path_node_children(compare);
     }
 
-    pub fn reduce_dir(&mut self, tree_index: &TreeIndex) {
+    pub fn collapse_dir(&mut self, tree_index: &TreeIndex) {
         let mut path_node = self;
         for i in &tree_index.index {
             path_node = &mut path_node.children[*i];

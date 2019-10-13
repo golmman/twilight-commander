@@ -64,15 +64,15 @@ mod tests {
         let tree_index = path_node.flat_index_to_tree_index(15);
         assert_eq!(vec![1, 1], tree_index.index);
 
-        // reduce_dir
-        path_node.reduce_dir(&TreeIndex::new(vec![1, 0, 2, 1]));
+        // collapse_dir
+        path_node.collapse_dir(&TreeIndex::new(vec![1, 0, 2, 1]));
         assert_eq!(
             26,
             composer.compose_path_node(&path_node).len(),
             "reducing the last opened dir"
         );
 
-        path_node.reduce_dir(&TreeIndex::new(vec![1, 0]));
+        path_node.collapse_dir(&TreeIndex::new(vec![1, 0]));
         assert_eq!(
             17,
             composer.compose_path_node(&path_node).len(),
@@ -117,15 +117,15 @@ mod tests {
         path_node.expand_dir(&TreeIndex::new(vec![11, 3, 3, 1]), path_node_compare);
         assert_eq!(29, composer.compose_path_node(&path_node).len());
 
-        // reduce_dir
-        path_node.reduce_dir(&TreeIndex::new(vec![11, 3, 3, 1]));
+        // collapse_dir
+        path_node.collapse_dir(&TreeIndex::new(vec![11, 3, 3, 1]));
         assert_eq!(
             26,
             composer.compose_path_node(&path_node).len(),
             "reducing the last opened dir"
         );
 
-        path_node.reduce_dir(&TreeIndex::new(vec![11, 3]));
+        path_node.collapse_dir(&TreeIndex::new(vec![11, 3]));
         assert_eq!(
             17,
             composer.compose_path_node(&path_node).len(),
