@@ -5,6 +5,8 @@
 A simple console tree file explorer for linux, similiar to NERDTree but independent of vim.
 Developed and tested on Ubuntu 18.04 with xterm derivatives.
 
+![Screenshot](https://github.com/golmman/twilight-commander/blob/master/screenshot.png "Screenshot")
+
 ## Build and install
 
 ### Instructions for Debian 10 or Ubuntu 18.04
