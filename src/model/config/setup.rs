@@ -6,13 +6,15 @@ pub struct Setup {
     pub working_dir: String,
 }
 
-impl Setup {
-    pub fn default() -> Setup {
+impl Default for Setup {
+    fn default() -> Self {
         Setup {
             working_dir: Self::default_working_dir(),
         }
     }
+}
 
+impl Setup {
     fn default_working_dir() -> String {
         String::from(".")
     }

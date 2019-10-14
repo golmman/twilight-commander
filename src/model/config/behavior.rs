@@ -12,15 +12,17 @@ pub struct Behavior {
     pub scrolling: String,
 }
 
-impl Behavior {
-    pub fn default() -> Behavior {
+impl Default for Behavior {
+    fn default() -> Behavior {
         Behavior {
             file_action: Self::default_file_action(),
             path_node_sort: Self::default_path_node_sort(),
             scrolling: Self::default_scrolling(),
         }
     }
+}
 
+impl Behavior {
     fn default_file_action() -> String {
         String::from("true") // do nothing!
     }

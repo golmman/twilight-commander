@@ -12,15 +12,17 @@ pub struct Composition {
     pub use_utf8: bool,
 }
 
-impl Composition {
-    pub fn default() -> Composition {
+impl Default for Composition {
+    fn default() -> Composition {
         Composition {
             indent: Self::default_indent(),
             show_indent: Self::default_show_indent(),
             use_utf8: Self::default_use_utf8(),
         }
     }
+}
 
+impl Composition {
     fn default_indent() -> i32 {
         2
     }

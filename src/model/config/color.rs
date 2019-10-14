@@ -9,14 +9,16 @@ pub struct Color {
     pub foreground: String,
 }
 
-impl Color {
-    pub fn default() -> Color {
+impl Default for Color {
+    fn default() -> Self {
         Color {
             background: Self::default_background(),
             foreground: Self::default_foreground(),
         }
     }
+}
 
+impl Color {
     fn default_background() -> String {
         String::from("000000")
     }

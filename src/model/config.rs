@@ -17,35 +17,25 @@ mod composition;
 mod debug;
 mod setup;
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Default, Deserialize)]
 pub struct Config {
-    #[serde(default = "Behavior::default")]
+    #[serde(default)]
     pub behavior: Behavior,
 
-    #[serde(default = "Color::default")]
+    #[serde(default)]
     pub color: Color,
 
-    #[serde(default = "Composition::default")]
+    #[serde(default)]
     pub composition: Composition,
 
-    #[serde(default = "Debug::default")]
+    #[serde(default)]
     pub debug: Debug,
 
-    #[serde(default = "Setup::default")]
+    #[serde(default)]
     pub setup: Setup,
 }
 
 impl Config {
-    pub fn default() -> Self {
-        Self {
-            behavior: Behavior::default(),
-            color: Color::default(),
-            composition: Composition::default(),
-            debug: Debug::default(),
-            setup: Setup::default(),
-        }
-    }
-
     pub fn new() -> Self {
         let config = Self::read_config_file_from_home().unwrap_or_else(Self::default);
 

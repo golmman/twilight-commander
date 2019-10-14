@@ -18,8 +18,8 @@ pub struct Debug {
     pub spacing_top: i32,
 }
 
-impl Debug {
-    pub fn default() -> Self {
+impl Default for Debug {
+    fn default() -> Self {
         Self {
             enabled: Self::default_enabled(),
             padding_bot: Self::default_padding_bot(),
@@ -28,7 +28,9 @@ impl Debug {
             spacing_top: Self::default_spacing_top(),
         }
     }
+}
 
+impl Debug {
     fn default_enabled() -> bool {
         false
     }
