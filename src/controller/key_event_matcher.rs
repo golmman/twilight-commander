@@ -1,7 +1,11 @@
-use crate::controller::EventQueue;
-use crate::model::event::Key;
-use crate::model::path_node::PathNode;
-use crate::model::tree_index::TreeIndex;
+use crate::{
+    controller::EventQueue,
+    model::{
+        event::Key,
+        path_node::PathNode,
+        tree_index::TreeIndex,
+    },
+};
 use std::io::Write;
 
 impl<W: Write> EventQueue<W> {
@@ -97,9 +101,13 @@ impl<W: Write> EventQueue<W> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::model::config::Config;
-    use crate::view::composer::Composer;
-    use crate::view::Pager;
+    use crate::{
+        model::config::Config,
+        view::{
+            composer::Composer,
+            Pager,
+        },
+    };
 
     fn prepare_event_queue() -> EventQueue<Vec<u8>> {
         let config = Config::default();

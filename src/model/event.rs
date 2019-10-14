@@ -14,7 +14,9 @@ pub enum Event {
 
 impl From<TEvent> for Key {
     fn from(t_event: TEvent) -> Key {
-        Key { inner: t_event }
+        Key {
+            inner: t_event,
+        }
     }
 }
 

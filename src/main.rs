@@ -4,10 +4,14 @@ use std::io::stdout;
 use termion::raw::IntoRawMode;
 
 use controller::EventQueue;
-use model::config::Config;
-use model::path_node::PathNode;
-use view::composer::Composer;
-use view::Pager;
+use model::{
+    config::Config,
+    path_node::PathNode,
+};
+use view::{
+    composer::Composer,
+    Pager,
+};
 
 mod controller;
 mod model;

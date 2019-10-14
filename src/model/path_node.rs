@@ -1,7 +1,11 @@
-use crate::model::compare_functions::PathNodeCompare;
-use crate::model::tree_index::TreeIndex;
-use std::fs::canonicalize;
-use std::path::PathBuf;
+use crate::model::{
+    compare_functions::PathNodeCompare,
+    tree_index::TreeIndex,
+};
+use std::{
+    fs::canonicalize,
+    path::PathBuf,
+};
 
 pub struct PathNode {
     pub children: Vec<PathNode>,

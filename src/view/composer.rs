@@ -1,5 +1,7 @@
-use crate::model::config::Config;
-use crate::model::path_node::PathNode;
+use crate::model::{
+    config::Config,
+    path_node::PathNode,
+};
 
 pub struct Composer {
     config: Config,
@@ -7,7 +9,9 @@ pub struct Composer {
 
 impl Composer {
     pub fn new(config: Config) -> Self {
-        Self { config }
+        Self {
+            config,
+        }
     }
 
     pub fn truncate_string(string: &str, length: usize) -> String {

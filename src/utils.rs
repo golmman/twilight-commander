@@ -1,6 +1,8 @@
-use std::fs::File;
-use std::io::Read;
-use std::process::exit;
+use std::{
+    fs::File,
+    io::Read,
+    process::exit,
+};
 
 pub fn read_file(file_name: &str) -> std::io::Result<String> {
     let mut file = File::open(file_name)?;

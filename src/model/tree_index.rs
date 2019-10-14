@@ -5,7 +5,9 @@ pub struct TreeIndex {
 
 impl TreeIndex {
     pub fn new(index: Vec<usize>) -> Self {
-        Self { index }
+        Self {
+            index,
+        }
     }
 
     #[allow(dead_code)] // TODO: remove?

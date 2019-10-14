@@ -1,18 +1,30 @@
-use crate::controller::key_event_handler::KeyEventHandler;
-use crate::controller::resize_event_handler::ResizeEventHandler;
-use crate::model::compare_functions::PathNodeCompare;
-use crate::model::config::Config;
-use crate::model::event::Event;
-use crate::model::path_node::PathNode;
-use crate::model::tree_index::TreeIndex;
-use crate::view::composer::Composer;
-use crate::view::Pager;
-use std::cmp::Ordering;
-use std::io::Write;
-use std::sync::mpsc::sync_channel;
-use std::sync::mpsc::Receiver;
-use std::sync::mpsc::SyncSender;
-use std::thread;
+use crate::{
+    controller::{
+        key_event_handler::KeyEventHandler,
+        resize_event_handler::ResizeEventHandler,
+    },
+    model::{
+        compare_functions::PathNodeCompare,
+        config::Config,
+        event::Event,
+        path_node::PathNode,
+        tree_index::TreeIndex,
+    },
+    view::{
+        composer::Composer,
+        Pager,
+    },
+};
+use std::{
+    cmp::Ordering,
+    io::Write,
+    sync::mpsc::{
+        sync_channel,
+        Receiver,
+        SyncSender,
+    },
+    thread,
+};
 
 mod key_event_handler;
 mod key_event_matcher;

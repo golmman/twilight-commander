@@ -1,14 +1,22 @@
-use crate::model::config::behavior::Behavior;
-use crate::model::config::color::Color;
-use crate::model::config::composition::Composition;
-use crate::model::config::debug::Debug;
-use crate::model::config::keybinding::Keybinding;
-use crate::model::config::setup::Setup;
-use crate::utils::print_help;
-use crate::utils::read_file;
+use crate::{
+    model::config::{
+        behavior::Behavior,
+        color::Color,
+        composition::Composition,
+        debug::Debug,
+        keybinding::Keybinding,
+        setup::Setup,
+    },
+    utils::{
+        print_help,
+        read_file,
+    },
+};
 use serde::Deserialize;
-use std::env::args;
-use std::process::exit;
+use std::{
+    env::args,
+    process::exit,
+};
 use toml;
 
 mod args_parser;

@@ -6,10 +6,14 @@ pub mod tree_index;
 
 #[cfg(test)]
 mod tests {
-    use crate::model::config::Config;
-    use crate::model::path_node::PathNode;
-    use crate::model::tree_index::TreeIndex;
-    use crate::view::composer::Composer;
+    use crate::{
+        model::{
+            config::Config,
+            path_node::PathNode,
+            tree_index::TreeIndex,
+        },
+        view::composer::Composer,
+    };
 
     #[test]
     fn test_integration_with_path_node_sort_dirs_top_simple() {

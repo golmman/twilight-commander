@@ -1,7 +1,11 @@
-use crate::model::event::Event;
-use crate::model::event::Key;
-use std::io::stdin;
-use std::sync::mpsc::SyncSender;
+use crate::model::event::{
+    Event,
+    Key,
+};
+use std::{
+    io::stdin,
+    sync::mpsc::SyncSender,
+};
 use termion::input::TermRead;
 
 pub struct KeyEventHandler {}

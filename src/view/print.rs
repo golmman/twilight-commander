@@ -1,7 +1,12 @@
-use crate::view::Composer;
-use crate::view::Pager;
+use crate::view::{
+    Composer,
+    Pager,
+};
 use std::io::Write;
-use termion::{color, style};
+use termion::{
+    color,
+    style,
+};
 
 impl<W: Write> Pager<W> {
     pub fn print_clear(&mut self) {

@@ -1,5 +1,7 @@
-use crate::model::config::Config;
-use crate::view::composer::Composer;
+use crate::{
+    model::config::Config,
+    view::composer::Composer,
+};
 use std::io::Write;
 
 pub mod composer;
