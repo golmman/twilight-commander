@@ -37,7 +37,7 @@ pub struct Config {
 
 impl Config {
     pub fn new() -> Self {
-        let config = Self::read_config_file_from_home().unwrap_or_else(Self::default);
+        let config = Self::read_config_file().unwrap_or_else(Self::default);
 
         Self::parse_args(config, args().skip(1))
     }
@@ -62,12 +62,17 @@ impl Config {
         })
     }
 
-    fn read_config_file_from_home() -> Option<Self> {
-        if let Ok(home_dir) = std::env::var("HOME") {
-            let home_config_path = format!("{}/{}", home_dir, ".twilight-commander-rc.toml");
-            if let Ok(config_file) = read_file(&home_config_path) {
-                return toml::from_str(&config_file).ok();
-            }
+    fn read_config_file() -> Option<Self> {
+        let config_path = if let Ok(xdg_config_home) = std::env::var("XDG_CONFIG_HOME") {
+            format!("{}/twilight-commander.toml", xdg_config_home)
+        } else if let Ok(home) = std::env::var("HOME") {
+            format!("{}/.config/twilight-commander/twilight-commander.toml", home)
+        } else {
+            String::new()
+        };
+
+        if let Ok(config_file) = read_file(&config_path) {
+            return toml::from_str(&config_file).ok();
         }
 
         None

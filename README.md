@@ -23,12 +23,13 @@ Developed and tested on Ubuntu 18.04 with xterm derivatives.
 
 ### Configuration
 The configuration is loaded as follows
-1. load values from ~/.twilight-commander-rc.toml
+1. load values from `$XDG_CONFIG_HOME/twilight-commander.toml`
+2. else load values from `$HOME/.config/twilight-commander/twilight-commander.toml`
 2. fill missing values with app defaults
 3. overwrite values with defines from the command line options
 
-For a config file with the default values, see [.twilight-commander-rc.toml](./.twilight-commander-rc.toml).
-The command line options are derived from the values defined inside the .twilight-commander-rc.toml .
+For a config file with the default values, see [twilight-commander.toml](./twilight-commander.toml).
+The command line options are derived from the values defined inside the twilight-commander.toml .
 E.g.
 ```
 [debug]
@@ -75,7 +76,6 @@ Specified with the option `--behaviour.scrolling` (default = `center`)
 In case your terminal does not support utf-8 you can disable it with `--composition.use_utf8=false`.
 
 ## Ideas for improvements
-* **honor the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)**
 * **add a proper Makefile**
 * **configurable key bindings**
 * **advanced navigation**
