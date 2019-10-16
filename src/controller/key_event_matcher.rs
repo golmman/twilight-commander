@@ -1,20 +1,29 @@
 use crate::controller::EventQueue;
+use crate::model::event::Key;
 use crate::model::path_node::PathNode;
 use crate::model::tree_index::TreeIndex;
 use std::io::Write;
-use termion::event::Key;
 
 impl<W: Write> EventQueue<W> {
     pub fn match_key_event(&mut self, key: Key) -> Option<()> {
-        match key {
-            Key::Char('q') => self.do_quit(),
-            Key::Up => self.do_entry_up(),
-            Key::Down => self.do_entry_down(),
-            Key::Right => self.do_expand_dir(),
-            Key::Left => self.do_collapse_dir(),
-            Key::Char('\u{0A}') => self.do_file_action(),
-            Key::Char('r') => self.do_reload(),
-            _ => Some(()),
+        let ck = self.config.keybinding.clone();
+
+        if key == Key::from(ck.quit) {
+            self.do_quit()
+        } else if key == Key::from(ck.entry_up) {
+            self.do_entry_up()
+        } else if key == Key::from(ck.entry_down) {
+            self.do_entry_down()
+        } else if key == Key::from(ck.expand_dir) {
+            self.do_expand_dir()
+        } else if key == Key::from(ck.collapse_dir) {
+            self.do_collapse_dir()
+        } else if key == Key::from(ck.file_action) {
+            self.do_file_action()
+        } else if key == Key::from(ck.reload) {
+            self.do_reload()
+        } else {
+            Some(())
         }
     }
 
@@ -106,77 +115,77 @@ mod tests {
     fn match_key_event_default_test() {
         let result = {
             let mut event_queue = prepare_event_queue();
-            event_queue.match_key_event(Key::__IsNotComplete)
+            event_queue.match_key_event(Key::from("nonsense"))
         };
 
         assert!(result.is_some());
     }
 
     #[test]
-    fn match_key_event_q_test() {
+    fn match_key_event_quit_test() {
         let result = {
             let mut event_queue = prepare_event_queue();
-            event_queue.match_key_event(Key::Char('q'))
+            event_queue.match_key_event(Key::from(event_queue.config.keybinding.quit.clone()))
         };
 
         assert!(result.is_none());
     }
 
     #[test]
-    fn match_key_event_r_test() {
+    fn match_key_event_reload_test() {
         let result = {
             let mut event_queue = prepare_event_queue();
-            event_queue.match_key_event(Key::Char('r'))
+            event_queue.match_key_event(Key::from(event_queue.config.keybinding.reload.clone()))
         };
 
         assert!(result.is_some());
     }
 
     #[test]
-    fn match_key_event_return_test() {
+    fn match_key_event_file_action_test() {
         let result = {
             let mut event_queue = prepare_event_queue();
-            event_queue.match_key_event(Key::Char('\u{0A}'))
+            event_queue.match_key_event(Key::from(event_queue.config.keybinding.file_action.clone()))
         };
 
         assert!(result.is_some());
     }
 
     #[test]
-    fn match_key_event_up_test() {
+    fn match_key_event_entry_up_test() {
         let result = {
             let mut event_queue = prepare_event_queue();
-            event_queue.match_key_event(Key::Up)
+            event_queue.match_key_event(Key::from(event_queue.config.keybinding.entry_up.clone()))
         };
 
         assert!(result.is_some());
     }
 
     #[test]
-    fn match_key_event_down_test() {
+    fn match_key_event_entry_down_test() {
         let result = {
             let mut event_queue = prepare_event_queue();
-            event_queue.match_key_event(Key::Down)
+            event_queue.match_key_event(Key::from(event_queue.config.keybinding.entry_down.clone()))
         };
 
         assert!(result.is_some());
     }
 
     #[test]
-    fn match_key_event_left_test() {
+    fn match_key_event_collapse_dir_test() {
         let result = {
             let mut event_queue = prepare_event_queue();
-            event_queue.match_key_event(Key::Left)
+            event_queue.match_key_event(Key::from(event_queue.config.keybinding.collapse_dir.clone()))
         };
 
         assert!(result.is_some());
     }
 
     #[test]
-    fn match_key_event_right_test() {
+    fn match_key_event_expand_dir_test() {
         let result = {
             let mut event_queue = prepare_event_queue();
-            event_queue.match_key_event(Key::Right)
+            event_queue.match_key_event(Key::from(event_queue.config.keybinding.expand_dir.clone()))
         };
 
         assert!(result.is_some());

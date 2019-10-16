@@ -2,6 +2,7 @@ use crate::model::config::behavior::Behavior;
 use crate::model::config::color::Color;
 use crate::model::config::composition::Composition;
 use crate::model::config::debug::Debug;
+use crate::model::config::keybinding::Keybinding;
 use crate::model::config::setup::Setup;
 use crate::utils::print_help;
 use crate::utils::read_file;
@@ -15,6 +16,7 @@ mod behavior;
 mod color;
 mod composition;
 mod debug;
+mod keybinding;
 mod setup;
 
 #[derive(Clone, Debug, Default, Deserialize)]
@@ -30,6 +32,9 @@ pub struct Config {
 
     #[serde(default)]
     pub debug: Debug,
+
+    #[serde(default)]
+    pub keybinding: Keybinding,
 
     #[serde(default)]
     pub setup: Setup,
@@ -99,6 +104,13 @@ impl Config {
                 "--debug.padding_top" => config.debug.padding_top = Self::parse_value((key, value)),
                 "--debug.spacing_bot" => config.debug.spacing_bot = Self::parse_value((key, value)),
                 "--debug.spacing_top" => config.debug.spacing_top = Self::parse_value((key, value)),
+                "--keybinding.collapse_dir" => config.keybinding.collapse_dir = Self::parse_value((key, value)),
+                "--keybinding.entry_down" => config.keybinding.entry_down = Self::parse_value((key, value)),
+                "--keybinding.entry_up" => config.keybinding.entry_up = Self::parse_value((key, value)),
+                "--keybinding.expand_dir" => config.keybinding.expand_dir = Self::parse_value((key, value)),
+                "--keybinding.file_action" => config.keybinding.file_action = Self::parse_value((key, value)),
+                "--keybinding.quit" => config.keybinding.quit = Self::parse_value((key, value)),
+                "--keybinding.reload" => config.keybinding.reload = Self::parse_value((key, value)),
                 "--setup.working_dir" => config.setup.working_dir = Self::parse_value((key, value)),
 
                 "--help" => print_help(),

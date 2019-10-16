@@ -1,4 +1,4 @@
-use crate::controller::event::Event;
+use crate::model::event::Event;
 use std::sync::mpsc::SyncSender;
 
 pub struct ResizeEventHandler {}

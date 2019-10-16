@@ -15,5 +15,14 @@ padding_top = 3
 spacing_bot = 0
 spacing_top = 1
 
+[keybinding]
+collapse_dir = "left"
+entry_down = "down"
+entry_up = "up"
+expand_dir = "right"
+file_action = "return"
+quit = "q"
+reload = "r"
+
 [setup]
 working_dir = "."

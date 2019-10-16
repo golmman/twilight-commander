@@ -1,5 +1,6 @@
 pub mod compare_functions;
 pub mod config;
+pub mod event;
 pub mod path_node;
 pub mod tree_index;
 

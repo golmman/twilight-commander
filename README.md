@@ -37,12 +37,19 @@ enabled = true
 ```
 is set with the option `--debug.enabled=true`.
 
-### Directory entry browsing
-* up, down: move cursor
-* left, right: close, open directories
-* return: perform behavior.file_action
-* r: reload
-* q: quit
+### Configurable key bindings
+
+The key bindings are configurable. For the set of configurable keys and key combinations consult the [event.rs](./src/model/event.rs).
+
+|default key|default configuration|action|
+|---|---|---|
+|up arrow|`keybinding.entry_up=up`|move an entry up|
+|down arrow|`keybinding.entry_down=down`|move an entry down|
+|left arrow|`keybinding.collapse_dir=left`|collapse an entry directory|
+|right arrow|`keybinding.expand_dir=left`|expand an entry directory|
+|r|`keybinding.reload=r`|collapse all directories and reload root directory|
+|return|`keybinding.file_action=return`|perform configured file action|
+|q|`keybinding.quit=q`|quit|
 
 ### Directory entry management
 
@@ -76,12 +83,12 @@ Specified with the option `--behaviour.scrolling` (default = `center`)
 In case your terminal does not support utf-8 you can disable it with `--composition.use_utf8=false`.
 
 ## Ideas for improvements
-* **add a proper Makefile**
-* **configurable key bindings**
 * **advanced navigation**
   * jump to parent directory
   * skip x entries by holding a modifier key
   * collapse the current parent directory
+* add a proper Makefile
+  * https://sagiegurari.github.io/cargo-make/
 * better response to terminal resize events: in some terminals response is too slow, text is wrapped
   * intended to work like `less -S <filename>`
   * problem seems not to appear in plain xterm

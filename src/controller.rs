@@ -1,8 +1,8 @@
-use crate::controller::event::Event;
 use crate::controller::key_event_handler::KeyEventHandler;
 use crate::controller::resize_event_handler::ResizeEventHandler;
 use crate::model::compare_functions::PathNodeCompare;
 use crate::model::config::Config;
+use crate::model::event::Event;
 use crate::model::path_node::PathNode;
 use crate::model::tree_index::TreeIndex;
 use crate::view::composer::Composer;
@@ -14,7 +14,6 @@ use std::sync::mpsc::Receiver;
 use std::sync::mpsc::SyncSender;
 use std::thread;
 
-mod event;
 mod key_event_handler;
 mod key_event_matcher;
 mod resize_event_handler;
