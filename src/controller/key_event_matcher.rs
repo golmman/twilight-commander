@@ -5,26 +5,18 @@ use crate::model::tree_index::TreeIndex;
 use std::io::Write;
 
 impl<W: Write> EventQueue<W> {
+    #[rustfmt::skip]
     pub fn match_key_event(&mut self, key: Key) -> Option<()> {
         let ck = self.config.keybinding.clone();
 
-        if key == Key::from(ck.quit) {
-            self.do_quit()
-        } else if key == Key::from(ck.entry_up) {
-            self.do_entry_up()
-        } else if key == Key::from(ck.entry_down) {
-            self.do_entry_down()
-        } else if key == Key::from(ck.expand_dir) {
-            self.do_expand_dir()
-        } else if key == Key::from(ck.collapse_dir) {
-            self.do_collapse_dir()
-        } else if key == Key::from(ck.file_action) {
-            self.do_file_action()
-        } else if key == Key::from(ck.reload) {
-            self.do_reload()
-        } else {
-            Some(())
-        }
+        if key == Key::from(ck.quit) { self.do_quit() }
+        else if key == Key::from(ck.entry_up) { self.do_entry_up() }
+        else if key == Key::from(ck.entry_down) { self.do_entry_down() }
+        else if key == Key::from(ck.expand_dir) { self.do_expand_dir() }
+        else if key == Key::from(ck.collapse_dir) { self.do_collapse_dir() }
+        else if key == Key::from(ck.file_action) { self.do_file_action() }
+        else if key == Key::from(ck.reload) { self.do_reload() }
+        else { Some(()) }
     }
 
     fn do_collapse_dir(&mut self) -> Option<()> {
