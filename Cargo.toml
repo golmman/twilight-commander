@@ -3,7 +3,7 @@ authors = ["Dirk Kretschmann <kretschmanndi@gmail.com>"]
 edition = "2018"
 license = "MIT"
 name = "twilight-commander"
-version = "0.10.14"
+version = "0.11.0"
 
 [dependencies]
 serde = { version = "1.0.101",  features = ["derive"] }
