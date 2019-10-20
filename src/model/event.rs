@@ -107,7 +107,9 @@ mod tests {
     fn key_from_termion_event_test() {
         assert_eq!(
             Key::from(TEvent::Unsupported(vec![27, 91, 49, 59, 52, 66])),
-            Key { inner: TEvent::Unsupported(vec![27, 91, 49, 59, 52, 66]) }
+            Key {
+                inner: TEvent::Unsupported(vec![27, 91, 49, 59, 52, 66])
+            }
         );
     }
 
@@ -115,7 +117,9 @@ mod tests {
     fn key_from_str_test() {
         assert_eq!(
             Key::from("shift+alt+down"),
-            Key { inner: TEvent::Unsupported(vec![27, 91, 49, 59, 52, 66]) }
+            Key {
+                inner: TEvent::Unsupported(vec![27, 91, 49, 59, 52, 66])
+            }
         );
     }
 
@@ -123,7 +127,9 @@ mod tests {
     fn key_from_string_test() {
         assert_eq!(
             Key::from(String::from("shift+alt+up")),
-            Key { inner: TEvent::Unsupported(vec![27, 91, 49, 59, 52, 65]) }
+            Key {
+                inner: TEvent::Unsupported(vec![27, 91, 49, 59, 52, 65])
+            }
         );
     }
 

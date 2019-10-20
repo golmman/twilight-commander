@@ -62,7 +62,7 @@ twilight-commander "--behavior.file_action=xterm -e 'cat %s; echo opened file: %
 ```
 then
 ```
-bash -c "xterm -e 'cat %s; echo opened file: %s; bash'"
+bash -c "xterm -e 'cat /home/user/.bashrc; echo opened file: /home/user/.bashrc; bash'"
 ```
 is executed, i.e.:
 * a new xterm window is opened
