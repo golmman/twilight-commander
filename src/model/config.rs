@@ -11,7 +11,6 @@ use std::env::args;
 use std::process::exit;
 use toml;
 
-mod args_parser;
 mod behavior;
 mod color;
 mod composition;
@@ -45,42 +44,6 @@ impl Config {
         let config = Self::read_config_file().unwrap_or_else(Self::default);
 
         Self::parse_args(config, args().skip(1))
-    }
-
-    fn split_arg(arg: String) -> (String, String) {
-        let split_arg: Vec<&str> = arg.split('=').collect();
-
-        if split_arg.len() == 1 {
-            return (String::from(split_arg[0]), String::from(""));
-        }
-
-        (String::from(split_arg[0]), String::from(split_arg[1]))
-    }
-
-    fn parse_value<F>((key, value): (String, String)) -> F
-    where
-        F: std::str::FromStr,
-    {
-        value.parse().unwrap_or_else(|_| {
-            println!("option '{}={}' was not parsable", key, value);
-            exit(1);
-        })
-    }
-
-    fn read_config_file() -> Option<Self> {
-        let config_path = if let Ok(xdg_config_home) = std::env::var("XDG_CONFIG_HOME") {
-            format!("{}/twilight-commander.toml", xdg_config_home)
-        } else if let Ok(home) = std::env::var("HOME") {
-            format!("{}/.config/twilight-commander/twilight-commander.toml", home)
-        } else {
-            String::new()
-        };
-
-        if let Ok(config_file) = read_file(&config_path) {
-            return toml::from_str(&config_file).ok();
-        }
-
-        None
     }
 
     fn parse_args<T>(mut config: Self, args: T) -> Self
@@ -122,6 +85,42 @@ impl Config {
             }
         }
         config
+    }
+
+    fn split_arg(arg: String) -> (String, String) {
+        let split_arg: Vec<&str> = arg.split('=').collect();
+
+        if split_arg.len() == 1 {
+            return (String::from(split_arg[0]), String::from(""));
+        }
+
+        (String::from(split_arg[0]), String::from(split_arg[1]))
+    }
+
+    fn parse_value<F>((key, value): (String, String)) -> F
+    where
+        F: std::str::FromStr,
+    {
+        value.parse().unwrap_or_else(|_| {
+            println!("option '{}={}' was not parsable", key, value);
+            exit(1);
+        })
+    }
+
+    fn read_config_file() -> Option<Self> {
+        let config_path = if let Ok(xdg_config_home) = std::env::var("XDG_CONFIG_HOME") {
+            format!("{}/twilight-commander.toml", xdg_config_home)
+        } else if let Ok(home) = std::env::var("HOME") {
+            format!("{}/.config/twilight-commander/twilight-commander.toml", home)
+        } else {
+            String::new()
+        };
+
+        if let Ok(config_file) = read_file(&config_path) {
+            return toml::from_str(&config_file).ok();
+        }
+
+        None
     }
 }
 
