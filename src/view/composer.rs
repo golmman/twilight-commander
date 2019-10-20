@@ -44,7 +44,7 @@ impl Composer {
     }
 
     fn get_dir_prefix(&self, path_node: &PathNode) -> String {
-        let err_char = if self.config.composition.use_utf8 { '❌' } else { 'x' };
+        let err_char = if self.config.composition.use_utf8 { '⨯' } else { 'x' };
         let expanded_char = if self.config.composition.use_utf8 { '▼' } else { 'v' };
         let reduced_char = if self.config.composition.use_utf8 { '▶' } else { '>' };
 
