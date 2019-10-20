@@ -31,12 +31,22 @@ impl<W: Write> Pager<W> {
         .unwrap();
     }
 
-    pub fn print_header(&mut self, header_text: &str) {
+    pub fn print_header(&mut self, text: &str) {
         write!(
             self,
             "{}{}",
             termion::cursor::Goto(1, 1),
-            Composer::truncate_string(header_text, self.terminal_cols as usize),
+            Composer::truncate_string(text, self.terminal_cols as usize),
+        )
+        .unwrap();
+    }
+
+    pub fn print_footer(&mut self, text: &str) {
+        write!(
+            self,
+            "{}{}",
+            termion::cursor::Goto(1, 1 + self.terminal_rows as u16),
+            Composer::truncate_string(text, self.terminal_cols as usize),
         )
         .unwrap();
     }
@@ -189,6 +199,20 @@ mod tests {
 
         assert_eq!(
             "\u{1b}[?25l\u{1b}[1;1H\u{1b}[2J\u{1b}[1;1H--- test 123 ---",
+            result.unwrap(),
+        );
+    }
+
+    #[test]
+    fn print_footer_test() {
+        let result = {
+            let mut pager = prepare_pager();
+            pager.print_footer("--- test 123 ---");
+            get_result(pager)
+        };
+
+        assert_eq!(
+            "\u{1b}[?25l\u{1b}[1;1H\u{1b}[2J\u{1b}[11;1H--- test 123 ---",
             result.unwrap(),
         );
     }

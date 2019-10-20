@@ -116,3 +116,4 @@ In case your terminal does not support utf-8 you can disable it with `--composit
 * search
   * case insensitive wildcard
   * mark hits
+* nnn like status updates in the footer (permission denied, ...)

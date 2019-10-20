@@ -57,7 +57,11 @@ impl<W: Write> Pager<W> {
             }
         }
 
+        let footer_text = format!("[{}/{}]", self.cursor_row + 1, text_entries_len);
+
         self.print_header(&header_text);
+        self.print_footer(&footer_text);
+
         self.print_debug_info();
 
         self.flush().unwrap();

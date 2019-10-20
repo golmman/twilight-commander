@@ -44,10 +44,10 @@ impl Debug {
     }
 
     fn default_spacing_bot() -> i32 {
-        0
+        2
     }
 
     fn default_spacing_top() -> i32 {
-        1
+        2
     }
 }

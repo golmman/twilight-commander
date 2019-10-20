@@ -7,6 +7,7 @@ pub struct PathNode {
     pub children: Vec<PathNode>,
     pub display_text: String,
     pub is_dir: bool,
+    pub is_err: bool,
     pub is_expanded: bool,
     pub path: PathBuf,
 }
@@ -17,6 +18,7 @@ impl PathNode {
             children: Vec::new(),
             display_text: String::from(working_dir),
             is_dir: true,
+            is_err: false,
             is_expanded: false,
             path: PathBuf::from(working_dir),
         }
@@ -27,12 +29,15 @@ impl PathNode {
         canonicalized_path.to_str().unwrap().to_string()
     }
 
-    // TODO: errors when accessing a dir with insufficient permissios
-    //       eg. /lost+found
-    fn list_path_node_children(&self, compare: PathNodeCompare) -> Vec<PathNode> {
-        let dirs = self.path.read_dir().unwrap();
+    fn list_path_node_children(&mut self, compare: PathNodeCompare) -> Vec<PathNode> {
+        let dirs = self.path.read_dir();
 
-        let mut path_nodes = dirs
+        if dirs.is_err() {
+            self.is_err = true;
+            return Vec::new();
+        }
+
+        let mut path_nodes = dirs.unwrap()
             .map(|dir_entry| {
                 let dir_entry = dir_entry.unwrap();
 
@@ -40,6 +45,7 @@ impl PathNode {
                     children: Vec::new(),
                     display_text: dir_entry.file_name().into_string().unwrap(),
                     is_dir: dir_entry.path().is_dir(),
+                    is_err: false,
                     is_expanded: false,
                     path: dir_entry.path(),
                 }
