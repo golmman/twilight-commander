@@ -1,10 +1,10 @@
 extern crate termion;
 extern crate toml;
-use std::io::stdout;
-use termion::raw::IntoRawMode;
 use controller::EventQueue;
 use model::config::Config;
 use model::path_node::PathNode;
+use std::io::stdout;
+use termion::raw::IntoRawMode;
 use view::composer::Composer;
 use view::Pager;
 

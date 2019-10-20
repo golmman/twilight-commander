@@ -37,7 +37,8 @@ impl PathNode {
             return Vec::new();
         }
 
-        let mut path_nodes = dirs.unwrap()
+        let mut path_nodes = dirs
+            .unwrap()
             .map(|dir_entry| {
                 let dir_entry = dir_entry.unwrap();
 
