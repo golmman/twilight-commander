@@ -5,7 +5,7 @@
 A simple console tree file explorer for linux, similiar to NERDTree but independent of vim.
 Developed and tested on Ubuntu 18.04 with xterm derivatives.
 
-![Screenshot](https://github.com/golmman/twilight-commander/blob/master/screenshot.png "Screenshot")
+![Screenshot](https://github.com/golmman/twilight-commander/blob/master/screenshots/twilight-commander.png "twilight-commander")
 
 ## Build and install
 
@@ -43,13 +43,13 @@ The key bindings are configurable. For the set of configurable keys and key comb
 
 |default key|default configuration|action|
 |---|---|---|
-|up arrow|`keybinding.entry_up=up`|move an entry up|
-|down arrow|`keybinding.entry_down=down`|move an entry down|
-|left arrow|`keybinding.collapse_dir=left`|collapse an entry directory|
-|right arrow|`keybinding.expand_dir=left`|expand an entry directory|
-|r|`keybinding.reload=r`|collapse all directories and reload root directory|
-|return|`keybinding.file_action=return`|perform configured file action|
-|q|`keybinding.quit=q`|quit|
+|up arrow|`--keybinding.entry_up=up`|move an entry up|
+|down arrow|`--keybinding.entry_down=down`|move an entry down|
+|left arrow|`--keybinding.collapse_dir=left`|collapse an entry directory|
+|right arrow|`--keybinding.expand_dir=left`|expand an entry directory|
+|r|`--keybinding.reload=r`|collapse all directories and reload root directory|
+|return|`--keybinding.file_action=return`|perform configured file action|
+|q|`--keybinding.quit=q`|quit|
 
 ### Directory entry management
 
@@ -82,7 +82,28 @@ Specified with the option `--behaviour.scrolling` (default = `center`)
 ### Utf-8 support
 In case your terminal does not support utf-8 you can disable it with `--composition.use_utf8=false`.
 
+## Usage with tmux and vim
+
+![Screenshot](https://github.com/golmman/twilight-commander/blob/master/screenshots/tcide.png "tmux + vim + twilight-commander")
+
+The `tcide` script opens a new tmux session with 3 panes: vim, twilight-commander and terminal.
+Hitting the file_action key (default: return) on a file entry opens it in a new vim tab.
+
+### tcide requirements
+
+You need to build vim with the clientserver option:
+
+```
+git clone https://github.com/vim/vim.git
+cd vim/src
+make distclean
+./configure +clientserver
+make
+sudo make install
+```
+
 ## Ideas for improvements
+
 * **advanced navigation**
   * jump to parent directory
   * skip x entries by holding a modifier key

@@ -1,5 +1,16 @@
 #!/bin/bash
 
+# Opens a tmux session with 3 panes: vim, twilight-commander, terminal.
+# Hitting the file_action key (default: return) on a file entry opens it in a new vim tab.
+# You need to compile vim with the clientserver option:
+# git clone https://github.com/vim/vim.git
+# cd vim/src
+# make distclean
+# ./configure +clientserver
+# make
+# sudo make install
+
+
 if [[ -d $1 ]]; then
     DIRNAME="$(readlink -f $1)"
 elif [[ -f $1 ]]; then
