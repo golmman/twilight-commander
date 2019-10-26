@@ -2,6 +2,22 @@ use crate::view::Pager;
 use std::io::Write;
 
 impl<W: Write> Pager<W> {
+    fn get_index_overshoot(index_under_test: i32, index_now: i32, index_delta: i32) -> Option<i32> {
+        let index_before = index_now - index_delta;
+
+        // cross from below
+        if index_before <= index_under_test && index_now >= index_under_test {
+            return Some(index_now - index_under_test);
+        }
+
+        // cross from above
+        if index_before >= index_under_test && index_now <= index_under_test {
+            return Some(index_now - index_under_test);
+        }
+
+        None
+    }
+
     pub fn scroll_like_center(&self, cursor_row_delta: i32, text_entries_len: i32) -> i32 {
         let spacing_bot = self.config.debug.spacing_bot;
         let spacing_top = self.config.debug.spacing_top;
@@ -19,8 +35,8 @@ impl<W: Write> Pager<W> {
             return self.text_row - (self.cursor_row - center_text_row);
         }
 
-        // cursor row is exactly centered
-        if self.cursor_row - cursor_row_delta == center_text_row {
+        // cursor row is moved over the center
+        if let Some(overshoot) = Self::get_index_overshoot(center_text_row, self.cursor_row, cursor_row_delta) {
             // no need to keep it centered when we reach the top or bottom
             if self.text_row >= spacing_top && cursor_row_delta < 0 {
                 return self.text_row;
@@ -30,7 +46,7 @@ impl<W: Write> Pager<W> {
             }
 
             // keep it centered
-            return self.text_row - cursor_row_delta;
+            return self.text_row - overshoot;
         }
 
         // cursor row is beyond vision -> move the text row the minimal amount to correct that
@@ -79,6 +95,34 @@ mod tests {
         pager.terminal_rows = 10;
 
         pager
+    }
+
+    mod get_index_overshoot_tests {
+        use super::*;
+
+        #[test]
+        fn overshoot_from_below() {
+            let overshoot = Pager::<Vec<u8>>::get_index_overshoot(10, 11, 3);
+            assert_eq!(Some(1), overshoot);
+        }
+
+        #[test]
+        fn overshoot_from_above() {
+            let overshoot = Pager::<Vec<u8>>::get_index_overshoot(10, 7, -4);
+            assert_eq!(Some(-3), overshoot);
+        }
+
+        #[test]
+        fn no_overshoot_from_below() {
+            let overshoot = Pager::<Vec<u8>>::get_index_overshoot(10, 7, 2);
+            assert_eq!(None, overshoot);
+        }
+
+        #[test]
+        fn no_overshoot_from_above() {
+            let overshoot = Pager::<Vec<u8>>::get_index_overshoot(10, 14, -3);
+            assert_eq!(None, overshoot);
+        }
     }
 
     mod scroll_like_center_tests {
