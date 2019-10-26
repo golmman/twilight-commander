@@ -77,7 +77,7 @@ impl<W: Write> EventQueue<W> {
         // TODO: this simply resets the tree, implement a recursive method
         self.path_node = PathNode::from(self.config.setup.working_dir.clone());
         self.path_node
-            .expand_dir(&TreeIndex::new(Vec::new()), self.path_node_compare);
+            .expand_dir(&TreeIndex::from(Vec::new()), self.path_node_compare);
         self.text_entries = self.composer.compose_path_node(&self.path_node);
 
         self.pager

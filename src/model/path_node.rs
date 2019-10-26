@@ -116,13 +116,12 @@ impl PathNode {
     }
 
     pub fn flat_index_to_tree_index(&self, flat_index: usize) -> TreeIndex {
-        let mut result = TreeIndex::new(Vec::new());
+        let mut result = TreeIndex::from(Vec::new());
         self.flat_index_to_tree_index_rec(&mut (flat_index + 1), &mut result);
 
         result
     }
 
-    // TODO: tests
     pub fn get_child_path_node(&self, tree_index: &TreeIndex) -> &Self {
         let mut child_node = self;
         for i in &tree_index.index {
@@ -130,5 +129,25 @@ impl PathNode {
         }
 
         child_node
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn get_child_path_node_test() {
+        let path_node = {
+            let mut path_node = PathNode::from("./tests/test_dirs");
+            path_node.expand_dir(&TreeIndex::from(vec![]), PathNode::compare_dirs_top_simple);
+            path_node.expand_dir(&TreeIndex::from(vec![0]), PathNode::compare_dirs_top_simple);
+            path_node.expand_dir(&TreeIndex::from(vec![0, 0]), PathNode::compare_dirs_top_simple);
+            path_node
+        };
+
+        let child_path_node = path_node.get_child_path_node(&TreeIndex::from(vec![0, 0, 0]));
+
+        assert_eq!("file4", child_path_node.display_text);
     }
 }

@@ -22,34 +22,34 @@ mod tests {
         assert_eq!(0, composer.compose_path_node(&path_node).len());
 
         // expand_dir
-        path_node.expand_dir(&TreeIndex::new(Vec::new()), path_node_compare);
+        path_node.expand_dir(&TreeIndex::from(Vec::new()), path_node_compare);
         assert_eq!(
             13,
             composer.compose_path_node(&path_node).len(),
             "expanding the root directory"
         );
 
-        path_node.expand_dir(&TreeIndex::new(vec![3]), path_node_compare);
+        path_node.expand_dir(&TreeIndex::from(vec![3]), path_node_compare);
         assert_eq!(
             13,
             composer.compose_path_node(&path_node).len(),
             "expanding a file does nothing"
         );
 
-        path_node.expand_dir(&TreeIndex::new(vec![1]), path_node_compare);
+        path_node.expand_dir(&TreeIndex::from(vec![1]), path_node_compare);
         assert_eq!(17, composer.compose_path_node(&path_node).len());
 
-        path_node.expand_dir(&TreeIndex::new(vec![1, 0]), path_node_compare);
+        path_node.expand_dir(&TreeIndex::from(vec![1, 0]), path_node_compare);
         assert_eq!(23, composer.compose_path_node(&path_node).len());
 
-        path_node.expand_dir(&TreeIndex::new(vec![1, 0, 2]), path_node_compare);
+        path_node.expand_dir(&TreeIndex::from(vec![1, 0, 2]), path_node_compare);
         assert_eq!(26, composer.compose_path_node(&path_node).len());
 
-        path_node.expand_dir(&TreeIndex::new(vec![1, 0, 2, 1]), path_node_compare);
+        path_node.expand_dir(&TreeIndex::from(vec![1, 0, 2, 1]), path_node_compare);
         assert_eq!(29, composer.compose_path_node(&path_node).len());
 
         // tree_index_to_flat_index
-        let flat_index = TreeIndex::new(vec![7, 2, 4, 0, 0]).tree_index_to_flat_index();
+        let flat_index = TreeIndex::from(vec![7, 2, 4, 0, 0]).tree_index_to_flat_index();
         assert_eq!(17, flat_index);
 
         // flat_index_to_tree_index
@@ -66,14 +66,14 @@ mod tests {
         assert_eq!(vec![1, 1], tree_index.index);
 
         // collapse_dir
-        path_node.collapse_dir(&TreeIndex::new(vec![1, 0, 2, 1]));
+        path_node.collapse_dir(&TreeIndex::from(vec![1, 0, 2, 1]));
         assert_eq!(
             26,
             composer.compose_path_node(&path_node).len(),
             "reducing the last opened dir"
         );
 
-        path_node.collapse_dir(&TreeIndex::new(vec![1, 0]));
+        path_node.collapse_dir(&TreeIndex::from(vec![1, 0]));
         assert_eq!(
             17,
             composer.compose_path_node(&path_node).len(),
@@ -92,41 +92,41 @@ mod tests {
         assert_eq!(0, composer.compose_path_node(&path_node).len());
 
         // expand_dir
-        path_node.expand_dir(&TreeIndex::new(Vec::new()), path_node_compare);
+        path_node.expand_dir(&TreeIndex::from(Vec::new()), path_node_compare);
         assert_eq!(
             13,
             composer.compose_path_node(&path_node).len(),
             "expanding the root directory"
         );
 
-        path_node.expand_dir(&TreeIndex::new(vec![3]), path_node_compare);
+        path_node.expand_dir(&TreeIndex::from(vec![3]), path_node_compare);
         assert_eq!(
             13,
             composer.compose_path_node(&path_node).len(),
             "expanding a file does nothing"
         );
 
-        path_node.expand_dir(&TreeIndex::new(vec![11]), path_node_compare);
+        path_node.expand_dir(&TreeIndex::from(vec![11]), path_node_compare);
         assert_eq!(17, composer.compose_path_node(&path_node).len());
 
-        path_node.expand_dir(&TreeIndex::new(vec![11, 3]), path_node_compare);
+        path_node.expand_dir(&TreeIndex::from(vec![11, 3]), path_node_compare);
         assert_eq!(23, composer.compose_path_node(&path_node).len());
 
-        path_node.expand_dir(&TreeIndex::new(vec![11, 3, 3]), path_node_compare);
+        path_node.expand_dir(&TreeIndex::from(vec![11, 3, 3]), path_node_compare);
         assert_eq!(26, composer.compose_path_node(&path_node).len());
 
-        path_node.expand_dir(&TreeIndex::new(vec![11, 3, 3, 1]), path_node_compare);
+        path_node.expand_dir(&TreeIndex::from(vec![11, 3, 3, 1]), path_node_compare);
         assert_eq!(29, composer.compose_path_node(&path_node).len());
 
         // collapse_dir
-        path_node.collapse_dir(&TreeIndex::new(vec![11, 3, 3, 1]));
+        path_node.collapse_dir(&TreeIndex::from(vec![11, 3, 3, 1]));
         assert_eq!(
             26,
             composer.compose_path_node(&path_node).len(),
             "reducing the last opened dir"
         );
 
-        path_node.collapse_dir(&TreeIndex::new(vec![11, 3]));
+        path_node.collapse_dir(&TreeIndex::from(vec![11, 3]));
         assert_eq!(
             17,
             composer.compose_path_node(&path_node).len(),
