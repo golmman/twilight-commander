@@ -75,7 +75,7 @@ impl<W: Write> EventQueue<W> {
 
     fn do_reload(&mut self) -> Option<()> {
         // TODO: this simply resets the tree, implement a recursive method
-        self.path_node = PathNode::new(&self.config.setup.working_dir);
+        self.path_node = PathNode::from(self.config.setup.working_dir.clone());
         self.path_node
             .expand_dir(&TreeIndex::new(Vec::new()), self.path_node_compare);
         self.text_entries = self.composer.compose_path_node(&self.path_node);
@@ -98,7 +98,7 @@ mod tests {
 
         let composer = Composer::new(config.clone());
         let pager = Pager::new(config.clone(), Vec::new());
-        let path_node = PathNode::new(&config.setup.working_dir);
+        let path_node = PathNode::from(config.setup.working_dir.clone());
 
         EventQueue::new(config, composer, pager, path_node)
     }

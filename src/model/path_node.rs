@@ -12,8 +12,8 @@ pub struct PathNode {
     pub path: PathBuf,
 }
 
-impl PathNode {
-    pub fn new(working_dir: &str) -> Self {
+impl From<&str> for PathNode {
+    fn from(working_dir: &str) -> Self {
         Self {
             children: Vec::new(),
             display_text: String::from(working_dir),
@@ -23,7 +23,22 @@ impl PathNode {
             path: PathBuf::from(working_dir),
         }
     }
+}
 
+impl From<String> for PathNode {
+    fn from(working_dir: String) -> Self {
+        Self {
+            children: Vec::new(),
+            display_text: working_dir.clone(),
+            is_dir: true,
+            is_err: false,
+            is_expanded: false,
+            path: PathBuf::from(working_dir),
+        }
+    }
+}
+
+impl PathNode {
     pub fn get_absolute_path(&self) -> String {
         let canonicalized_path = canonicalize(self.path.as_path()).unwrap();
         canonicalized_path.to_str().unwrap().to_string()
