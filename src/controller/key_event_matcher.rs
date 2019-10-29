@@ -1,88 +1,28 @@
 use crate::controller::EventQueue;
 use crate::model::event::Key;
-use crate::model::path_node::PathNode;
-use crate::model::tree_index::TreeIndex;
 use std::io::Write;
+
+mod collapse_dir;
+mod entry_down;
+mod entry_up;
+mod expand_dir;
+mod file_action;
+mod quit;
+mod reload;
 
 impl<W: Write> EventQueue<W> {
     #[rustfmt::skip]
     pub fn match_key_event(&mut self, key: Key) -> Option<()> {
         let ck = self.config.keybinding.clone();
 
-        if key == Key::from(ck.quit) { self.do_quit() }
-        else if key == Key::from(ck.entry_up) { self.do_entry_up() }
+        if key == Key::from(ck.collapse_dir) { self.do_collapse_dir() }
         else if key == Key::from(ck.entry_down) { self.do_entry_down() }
+        else if key == Key::from(ck.entry_up) { self.do_entry_up() }
         else if key == Key::from(ck.expand_dir) { self.do_expand_dir() }
-        else if key == Key::from(ck.collapse_dir) { self.do_collapse_dir() }
         else if key == Key::from(ck.file_action) { self.do_file_action() }
+        else if key == Key::from(ck.quit) { self.do_quit() }
         else if key == Key::from(ck.reload) { self.do_reload() }
         else { Some(()) }
-    }
-
-    fn do_collapse_dir(&mut self) -> Option<()> {
-        let tree_index = self.path_node.flat_index_to_tree_index(self.pager.cursor_row as usize);
-        self.path_node.collapse_dir(&tree_index);
-        self.text_entries = self.composer.compose_path_node(&self.path_node);
-
-        self.pager
-            .update(0, &self.text_entries, self.path_node.get_absolute_path());
-        Some(())
-    }
-
-    fn do_entry_down(&mut self) -> Option<()> {
-        self.pager
-            .update(1, &self.text_entries, self.path_node.get_absolute_path());
-        Some(())
-    }
-
-    fn do_entry_up(&mut self) -> Option<()> {
-        self.pager
-            .update(-1, &self.text_entries, self.path_node.get_absolute_path());
-        Some(())
-    }
-
-    fn do_expand_dir(&mut self) -> Option<()> {
-        let tree_index = self.path_node.flat_index_to_tree_index(self.pager.cursor_row as usize);
-        self.path_node.expand_dir(&tree_index, self.path_node_compare);
-        self.text_entries = self.composer.compose_path_node(&self.path_node);
-
-        self.pager
-            .update(0, &self.text_entries, self.path_node.get_absolute_path());
-        Some(())
-    }
-
-    fn do_file_action(&mut self) -> Option<()> {
-        let tree_index = self.path_node.flat_index_to_tree_index(self.pager.cursor_row as usize);
-
-        let child_node = self.path_node.get_child_path_node(&tree_index);
-
-        if !child_node.is_dir {
-            let file_path = &child_node.get_absolute_path();
-            let file_action_replaced = self.config.behavior.file_action.replace("%s", file_path);
-
-            std::process::Command::new("bash")
-                .arg("-c")
-                .arg(file_action_replaced)
-                .spawn()
-                .unwrap();
-        }
-        Some(())
-    }
-
-    fn do_quit(&mut self) -> Option<()> {
-        None
-    }
-
-    fn do_reload(&mut self) -> Option<()> {
-        // TODO: this simply resets the tree, implement a recursive method
-        self.path_node = PathNode::from(self.config.setup.working_dir.clone());
-        self.path_node
-            .expand_dir(&TreeIndex::from(Vec::new()), self.path_node_compare);
-        self.text_entries = self.composer.compose_path_node(&self.path_node);
-
-        self.pager
-            .update(0, &self.text_entries, self.path_node.get_absolute_path());
-        Some(())
     }
 }
 
@@ -90,6 +30,7 @@ impl<W: Write> EventQueue<W> {
 mod tests {
     use super::*;
     use crate::model::config::Config;
+    use crate::model::path_node::PathNode;
     use crate::view::composer::Composer;
     use crate::view::Pager;
 
