@@ -1,7 +1,7 @@
 use crate::controller::EventQueue;
-use std::io::Write;
 use crate::model::path_node::PathNode;
 use crate::model::tree_index::TreeIndex;
+use std::io::Write;
 
 impl<W: Write> EventQueue<W> {
     pub fn do_reload(&mut self) -> Option<()> {
@@ -11,8 +11,7 @@ impl<W: Write> EventQueue<W> {
             .expand_dir(&TreeIndex::from(Vec::new()), self.path_node_compare);
         self.text_entries = self.composer.compose_path_node(&self.path_node);
 
-        self.pager
-            .update(0, &self.text_entries, self.path_node.get_absolute_path());
+        self.update_pager(0);
         Some(())
     }
 }

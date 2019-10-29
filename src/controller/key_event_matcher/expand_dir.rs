@@ -7,8 +7,7 @@ impl<W: Write> EventQueue<W> {
         self.path_node.expand_dir(&tree_index, self.path_node_compare);
         self.text_entries = self.composer.compose_path_node(&self.path_node);
 
-        self.pager
-            .update(0, &self.text_entries, self.path_node.get_absolute_path());
+        self.update_pager(0);
         Some(())
     }
 }

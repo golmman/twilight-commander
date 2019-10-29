@@ -24,6 +24,11 @@ impl<W: Write> EventQueue<W> {
         else if key == Key::from(ck.reload) { self.do_reload() }
         else { Some(()) }
     }
+
+    fn update_pager(&mut self, cursor_delta: i32) {
+        self.pager
+            .update(cursor_delta, &self.text_entries, self.path_node.get_absolute_path());
+    }
 }
 
 #[cfg(test)]
