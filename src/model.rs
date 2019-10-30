@@ -49,7 +49,7 @@ mod tests {
         assert_eq!(29, composer.compose_path_node(&path_node).len());
 
         // tree_index_to_flat_index
-        let flat_index = TreeIndex::from(vec![7, 2, 4, 0, 0]).tree_index_to_flat_index();
+        let flat_index = TreeIndex::from(vec![7, 2, 4, 0, 0]).to_flat_index();
         assert_eq!(17, flat_index);
 
         // flat_index_to_tree_index

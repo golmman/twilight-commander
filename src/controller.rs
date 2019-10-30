@@ -22,6 +22,7 @@ pub struct EventQueue<W: Write> {
     config: Config,
     composer: Composer,
     pager: Pager<W>,
+    // TODO: better name: root_path_node?
     path_node: PathNode,
     path_node_compare: PathNodeCompare,
     queue_receiver: Receiver<Event>,
@@ -35,6 +36,7 @@ impl<W: Write> EventQueue<W> {
     pub fn new(config: Config, composer: Composer, mut pager: Pager<W>, mut path_node: PathNode) -> Self {
         let (queue_sender, queue_receiver): (SyncSender<Event>, Receiver<Event>) = sync_channel(1024);
 
+        // TODO: PathNode should have a constructor with an expanded root
         let path_node_compare = Self::get_path_node_compare(&config);
         path_node.expand_dir(&TreeIndex::from(Vec::new()), path_node_compare);
 

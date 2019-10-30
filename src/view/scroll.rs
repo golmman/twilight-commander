@@ -18,6 +18,7 @@ impl<W: Write> Pager<W> {
         None
     }
 
+    // TODO: when jumping to the parent dir via collapse_dir, dont force center
     pub fn scroll_like_center(&self, cursor_row_delta: i32, text_entries_len: i32) -> i32 {
         let spacing_bot = self.config.debug.spacing_bot;
         let spacing_top = self.config.debug.spacing_top;

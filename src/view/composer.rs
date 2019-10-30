@@ -6,6 +6,7 @@ pub struct Composer {
 }
 
 impl Composer {
+    // TODO: from?
     pub fn new(config: Config) -> Self {
         Self { config }
     }

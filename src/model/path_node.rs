@@ -3,6 +3,8 @@ use crate::model::tree_index::TreeIndex;
 use std::fs::canonicalize;
 use std::path::PathBuf;
 
+mod debug;
+
 pub struct PathNode {
     pub children: Vec<PathNode>,
     pub display_text: String,
@@ -116,10 +118,36 @@ impl PathNode {
     }
 
     pub fn flat_index_to_tree_index(&self, flat_index: usize) -> TreeIndex {
-        let mut result = TreeIndex::from(Vec::new());
-        self.flat_index_to_tree_index_rec(&mut (flat_index + 1), &mut result);
+        let mut tree_index = TreeIndex::from(Vec::new());
+        self.flat_index_to_tree_index_rec(&mut (flat_index + 1), &mut tree_index);
 
-        result
+        tree_index
+    }
+
+    pub fn tree_index_to_flat_index_rec(&self, target_tree_index: &TreeIndex, current_tree_index: &TreeIndex) -> usize {
+        if current_tree_index >= target_tree_index {
+            return 0;
+        }
+
+        if self.children.is_empty() {
+            return 1;
+        }
+
+        let mut sum = 1;
+
+        for (index, child) in self.children.iter().enumerate() {
+            let mut new_current_tree_index = current_tree_index.clone();
+            new_current_tree_index.index.push(index);
+
+            sum += child.tree_index_to_flat_index_rec(target_tree_index, &new_current_tree_index);
+        }
+
+        sum
+    }
+
+    pub fn tree_index_to_flat_index(&self, tree_index: &TreeIndex) -> usize {
+        // We count the root directory, hence we have to subtract 1 to get the proper index.
+        self.tree_index_to_flat_index_rec(tree_index, &TreeIndex::new()) - 1
     }
 
     pub fn get_child_path_node(&self, tree_index: &TreeIndex) -> &Self {
@@ -136,18 +164,91 @@ impl PathNode {
 mod tests {
     use super::*;
 
-    #[test]
-    fn get_child_path_node_test() {
-        let path_node = {
-            let mut path_node = PathNode::from("./tests/test_dirs");
-            path_node.expand_dir(&TreeIndex::from(vec![]), PathNode::compare_dirs_top_simple);
-            path_node.expand_dir(&TreeIndex::from(vec![0]), PathNode::compare_dirs_top_simple);
-            path_node.expand_dir(&TreeIndex::from(vec![0, 0]), PathNode::compare_dirs_top_simple);
-            path_node
-        };
+    fn get_expanded_path_node() -> PathNode {
+        let mut path_node = PathNode::from("./tests/test_dirs");
+        path_node.expand_dir(&TreeIndex::new(), PathNode::compare_dirs_top_simple);
+        path_node.expand_dir(&TreeIndex::from(vec![0]), PathNode::compare_dirs_top_simple);
+        path_node.expand_dir(&TreeIndex::from(vec![0, 0]), PathNode::compare_dirs_top_simple);
+        path_node.expand_dir(&TreeIndex::from(vec![1]), PathNode::compare_dirs_top_simple);
+        path_node.expand_dir(&TreeIndex::from(vec![1, 0]), PathNode::compare_dirs_top_simple);
+        path_node.expand_dir(&TreeIndex::from(vec![1, 0, 2]), PathNode::compare_dirs_top_simple);
+        path_node
+    }
 
-        let child_path_node = path_node.get_child_path_node(&TreeIndex::from(vec![0, 0, 0]));
+    mod get_child_path_node_tests {
+        use super::*;
 
-        assert_eq!("file4", child_path_node.display_text);
+        #[test]
+        fn first_dirs() {
+            let path_node = {
+                let mut path_node = PathNode::from("./tests/test_dirs");
+                path_node.expand_dir(&TreeIndex::new(), PathNode::compare_dirs_top_simple);
+                path_node.expand_dir(&TreeIndex::from(vec![0]), PathNode::compare_dirs_top_simple);
+                path_node.expand_dir(&TreeIndex::from(vec![0, 0]), PathNode::compare_dirs_top_simple);
+                path_node
+            };
+
+            let child_path_node = path_node.get_child_path_node(&TreeIndex::from(vec![0, 0, 0]));
+
+            assert_eq!("file4", child_path_node.display_text);
+        }
+
+        #[test]
+        fn complex_dirs() {
+            let path_node = get_expanded_path_node();
+
+            let child_path_node = path_node.get_child_path_node(&TreeIndex::from(vec![1, 0, 2, 2]));
+
+            assert_eq!("file12", child_path_node.display_text);
+        }
+    }
+
+    mod tree_index_to_flat_index_tests {
+        use super::*;
+
+        #[test]
+        fn complex_dirs() {
+            let path_node = get_expanded_path_node();
+
+            let flat_index = path_node.tree_index_to_flat_index(&TreeIndex::from(vec![4]));
+
+            assert_eq!(22, flat_index);
+        }
+
+        #[test]
+        fn complex_dirs2() {
+            let path_node = get_expanded_path_node();
+
+            let flat_index = path_node.tree_index_to_flat_index(&TreeIndex::from(vec![5]));
+
+            assert_eq!(23, flat_index);
+        }
+
+        #[test]
+        fn complex_dirs3() {
+            let path_node = get_expanded_path_node();
+
+            let flat_index = path_node.tree_index_to_flat_index(&TreeIndex::from(vec![1, 0, 4]));
+
+            assert_eq!(15, flat_index);
+        }
+
+        #[test]
+        fn total_count() {
+            let path_node = get_expanded_path_node();
+
+            let flat_index = path_node.tree_index_to_flat_index(&TreeIndex::from(vec![100_000]));
+
+            assert_eq!(31, flat_index);
+        }
+
+        #[test]
+        fn zero() {
+            let path_node = get_expanded_path_node();
+
+            let flat_index = path_node.tree_index_to_flat_index(&TreeIndex::from(vec![0]));
+
+            assert_eq!(0, flat_index);
+        }
     }
 }

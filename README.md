@@ -45,7 +45,7 @@ The key bindings are configurable. For the set of configurable keys and key comb
 |---|---|---|
 |up arrow|`--keybinding.entry_up=up`|move an entry up|
 |down arrow|`--keybinding.entry_down=down`|move an entry down|
-|left arrow|`--keybinding.collapse_dir=left`|collapse an entry directory|
+|left arrow|`--keybinding.collapse_dir=left`|collapse an entry directory or jump to parent if not collapsable|
 |right arrow|`--keybinding.expand_dir=left`|expand an entry directory|
 |r|`--keybinding.reload=r`|collapse all directories and reload root directory|
 |return|`--keybinding.file_action=return`|perform configured file action|
@@ -105,7 +105,7 @@ sudo make install
 ## Ideas for improvements
 
 * **advanced navigation**
-  * jump to parent directory
+  * ~~jump to parent directory~~
   * skip x entries by holding a modifier key
   * collapse the current parent directory
 * add a proper Makefile
@@ -138,3 +138,4 @@ sudo make install
   * case insensitive wildcard
   * mark hits
 * nnn like status updates in the footer (permission denied, ...)
+* error log file
