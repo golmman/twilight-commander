@@ -19,8 +19,6 @@ impl<W: Write> EventQueue<W> {
     }
 
     fn get_parent_dir_cursor_delta(&mut self, tree_index: &TreeIndex) -> i32 {
-        println!("{:?}", self.path_node);
-
         let child_path_node = self.path_node.get_child_path_node(tree_index);
         if child_path_node.is_dir && child_path_node.is_expanded {
             return 0;
