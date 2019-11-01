@@ -46,13 +46,13 @@ impl Config {
         Self::parse_args(config, args().skip(1))
     }
 
+    #[rustfmt::skip]
     fn parse_args<T>(mut config: Self, args: T) -> Self
     where
         T: IntoIterator<Item = String>,
     {
         for arg in args {
             let (key, value) = Self::split_arg(arg);
-
             match key.as_str() {
                 "--behavior.file_action" => config.behavior.file_action = Self::parse_value((key, value)),
                 "--behavior.path_node_sort" => config.behavior.path_node_sort = Self::parse_value((key, value)),
@@ -108,13 +108,17 @@ impl Config {
     }
 
     fn read_config_file() -> Option<Self> {
-        let config_path = if let Ok(xdg_config_home) = std::env::var("XDG_CONFIG_HOME") {
-            format!("{}/twilight-commander.toml", xdg_config_home)
-        } else if let Ok(home) = std::env::var("HOME") {
-            format!("{}/.config/twilight-commander/twilight-commander.toml", home)
-        } else {
-            String::new()
-        };
+        let config_path =
+            if let Ok(xdg_config_home) = std::env::var("XDG_CONFIG_HOME") {
+                format!("{}/twilight-commander.toml", xdg_config_home)
+            } else if let Ok(home) = std::env::var("HOME") {
+                format!(
+                    "{}/.config/twilight-commander/twilight-commander.toml",
+                    home
+                )
+            } else {
+                String::new()
+            };
 
         if let Ok(config_file) = read_file(&config_path) {
             return toml::from_str(&config_file).ok();
@@ -147,8 +151,14 @@ mod tests {
 
         let config = Config::parse_args(default_config, args_vec.into_iter());
 
-        assert_eq!(config.behavior.file_action, String::from("file_action_test"));
-        assert_eq!(config.behavior.path_node_sort, String::from("path_node_sort_test"));
+        assert_eq!(
+            config.behavior.file_action,
+            String::from("file_action_test")
+        );
+        assert_eq!(
+            config.behavior.path_node_sort,
+            String::from("path_node_sort_test")
+        );
         assert_eq!(config.behavior.scrolling, String::from("scrolling_test"));
         assert_eq!(config.color.background, String::from("background_test"));
         assert_eq!(config.color.foreground, String::from("foreground_test"));
@@ -181,8 +191,14 @@ mod tests {
         let config = Config::parse_args(default_config, args_vec.into_iter());
         let def_conf = Config::default();
 
-        assert_eq!(config.behavior.file_action, String::from("file_action_test"));
-        assert_eq!(config.behavior.path_node_sort, String::from("path_node_sort_test"));
+        assert_eq!(
+            config.behavior.file_action,
+            String::from("file_action_test")
+        );
+        assert_eq!(
+            config.behavior.path_node_sort,
+            String::from("path_node_sort_test")
+        );
         assert_eq!(config.behavior.scrolling, String::from("scrolling_test"));
         assert_eq!(config.color.background, String::from("background_test"));
         assert_eq!(config.color.foreground, String::from("foreground_test"));

@@ -137,30 +137,54 @@ mod tests {
         use super::super::*;
         #[test]
         fn nonsense() {
-            assert_eq!(TEvent::Unsupported(Vec::new()), convert_str_to_termion_event("x1"));
-            assert_eq!(TEvent::Unsupported(Vec::new()), convert_str_to_termion_event("alt+x1"));
-            assert_eq!(TEvent::Unsupported(Vec::new()), convert_str_to_termion_event("ctrl+x1"));
+            assert_eq!(
+                TEvent::Unsupported(Vec::new()),
+                convert_str_to_termion_event("x1")
+            );
+            assert_eq!(
+                TEvent::Unsupported(Vec::new()),
+                convert_str_to_termion_event("alt+x1")
+            );
+            assert_eq!(
+                TEvent::Unsupported(Vec::new()),
+                convert_str_to_termion_event("ctrl+x1")
+            );
         }
 
         #[test]
         fn single_digit() {
-            assert_eq!(TEvent::Key(TKey::Char('x')), convert_str_to_termion_event("x"));
+            assert_eq!(
+                TEvent::Key(TKey::Char('x')),
+                convert_str_to_termion_event("x")
+            );
         }
         #[test]
         fn alt_digit() {
-            assert_eq!(TEvent::Key(TKey::Alt('x')), convert_str_to_termion_event("alt+x"));
+            assert_eq!(
+                TEvent::Key(TKey::Alt('x')),
+                convert_str_to_termion_event("alt+x")
+            );
         }
         #[test]
         fn ctrl_digit() {
-            assert_eq!(TEvent::Key(TKey::Ctrl('x')), convert_str_to_termion_event("ctrl+x"));
+            assert_eq!(
+                TEvent::Key(TKey::Ctrl('x')),
+                convert_str_to_termion_event("ctrl+x")
+            );
         }
         #[test]
         fn f_key() {
-            assert_eq!(TEvent::Key(TKey::F(5)), convert_str_to_termion_event("f5"));
+            assert_eq!(
+                TEvent::Key(TKey::F(5)),
+                convert_str_to_termion_event("f5")
+            );
         }
         #[test]
         fn special_key() {
-            assert_eq!(TEvent::Key(TKey::PageDown), convert_str_to_termion_event("page_down"));
+            assert_eq!(
+                TEvent::Key(TKey::PageDown),
+                convert_str_to_termion_event("page_down")
+            );
         }
         #[test]
         fn special_key_comination() {

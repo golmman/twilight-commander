@@ -4,7 +4,9 @@ use std::io::Write;
 
 impl<W: Write> EventQueue<W> {
     pub fn do_collapse_dir(&mut self) -> Option<()> {
-        let tree_index = self.path_node.flat_index_to_tree_index(self.pager.cursor_row as usize);
+        let tree_index = self
+            .path_node
+            .flat_index_to_tree_index(self.pager.cursor_row as usize);
 
         let cursor_delta = self.get_parent_dir_cursor_delta(&tree_index);
 
@@ -29,7 +31,10 @@ impl<W: Write> EventQueue<W> {
             return 0;
         }
 
-        let parent_flat_index = self.path_node.tree_index_to_flat_index(&parent_path_node_tree_index) as i32;
+        let parent_flat_index = self
+            .path_node
+            .tree_index_to_flat_index(&parent_path_node_tree_index)
+            as i32;
 
         parent_flat_index - self.pager.cursor_row
     }
@@ -47,12 +52,28 @@ mod tests {
     // TODO: duplicate code, create test utils?
     fn get_expanded_path_node() -> PathNode {
         let mut path_node = PathNode::from("./tests/test_dirs");
-        path_node.expand_dir(&TreeIndex::new(), PathNode::compare_dirs_top_simple);
-        path_node.expand_dir(&TreeIndex::from(vec![0]), PathNode::compare_dirs_top_simple);
-        path_node.expand_dir(&TreeIndex::from(vec![0, 0]), PathNode::compare_dirs_top_simple);
-        path_node.expand_dir(&TreeIndex::from(vec![1]), PathNode::compare_dirs_top_simple);
-        path_node.expand_dir(&TreeIndex::from(vec![1, 0]), PathNode::compare_dirs_top_simple);
-        path_node.expand_dir(&TreeIndex::from(vec![1, 0, 2]), PathNode::compare_dirs_top_simple);
+        path_node
+            .expand_dir(&TreeIndex::new(), PathNode::compare_dirs_top_simple);
+        path_node.expand_dir(
+            &TreeIndex::from(vec![0]),
+            PathNode::compare_dirs_top_simple,
+        );
+        path_node.expand_dir(
+            &TreeIndex::from(vec![0, 0]),
+            PathNode::compare_dirs_top_simple,
+        );
+        path_node.expand_dir(
+            &TreeIndex::from(vec![1]),
+            PathNode::compare_dirs_top_simple,
+        );
+        path_node.expand_dir(
+            &TreeIndex::from(vec![1, 0]),
+            PathNode::compare_dirs_top_simple,
+        );
+        path_node.expand_dir(
+            &TreeIndex::from(vec![1, 0, 2]),
+            PathNode::compare_dirs_top_simple,
+        );
         path_node
     }
 
@@ -63,7 +84,8 @@ mod tests {
         let pager = Pager::new(config.clone(), Vec::new());
         let path_node = PathNode::from(config.setup.working_dir.clone());
 
-        let mut event_queue = EventQueue::new(config, composer, pager, path_node);
+        let mut event_queue =
+            EventQueue::new(config, composer, pager, path_node);
 
         event_queue.path_node = get_expanded_path_node();
 
@@ -77,7 +99,8 @@ mod tests {
         fn expanded() {
             let mut event_queue = prepare_event_queue();
 
-            let delta = event_queue.get_parent_dir_cursor_delta(&TreeIndex::from(vec![0]));
+            let delta = event_queue
+                .get_parent_dir_cursor_delta(&TreeIndex::from(vec![0]));
 
             assert_eq!(0, delta);
         }
@@ -86,7 +109,8 @@ mod tests {
         fn empty_tree_index() {
             let mut event_queue = prepare_event_queue();
 
-            let delta = event_queue.get_parent_dir_cursor_delta(&TreeIndex::new());
+            let delta =
+                event_queue.get_parent_dir_cursor_delta(&TreeIndex::new());
 
             assert_eq!(0, delta);
         }
@@ -95,7 +119,8 @@ mod tests {
         fn jump() {
             let mut event_queue = prepare_event_queue();
 
-            let delta = event_queue.get_parent_dir_cursor_delta(&TreeIndex::from(vec![1, 0, 4]));
+            let delta = event_queue
+                .get_parent_dir_cursor_delta(&TreeIndex::from(vec![1, 0, 4]));
 
             assert_eq!(7, delta);
         }

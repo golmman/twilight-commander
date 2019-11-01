@@ -2,7 +2,11 @@ use crate::view::Pager;
 use std::io::Write;
 
 impl<W: Write> Pager<W> {
-    fn get_index_overshoot(index_under_test: i32, index_now: i32, index_delta: i32) -> Option<i32> {
+    fn get_index_overshoot(
+        index_under_test: i32,
+        index_now: i32,
+        index_delta: i32,
+    ) -> Option<i32> {
         let index_before = index_now - index_delta;
 
         // cross from below
@@ -19,11 +23,16 @@ impl<W: Write> Pager<W> {
     }
 
     // TODO: when jumping to the parent dir via collapse_dir, dont force center
-    pub fn scroll_like_center(&self, cursor_row_delta: i32, text_entries_len: i32) -> i32 {
+    pub fn scroll_like_center(
+        &self,
+        cursor_row_delta: i32,
+        text_entries_len: i32,
+    ) -> i32 {
         let spacing_bot = self.config.debug.spacing_bot;
         let spacing_top = self.config.debug.spacing_top;
 
-        let center_text_row = spacing_top - self.text_row + (self.terminal_rows - (spacing_bot + spacing_top)) / 2;
+        let center_text_row = spacing_top - self.text_row
+            + (self.terminal_rows - (spacing_bot + spacing_top)) / 2;
         let last_text_row = self.terminal_rows - (self.text_row + spacing_bot);
 
         // re-center a cursor row that is under the center (last text entry was visible)
@@ -31,18 +40,26 @@ impl<W: Write> Pager<W> {
         // in such a way that the bottom is not visible anymore
         if cursor_row_delta == 0
             && self.cursor_row - center_text_row > 0
-            && self.cursor_row - center_text_row <= text_entries_len - last_text_row
+            && self.cursor_row - center_text_row
+                <= text_entries_len - last_text_row
         {
             return self.text_row - (self.cursor_row - center_text_row);
         }
 
         // cursor row is moved over the center
-        if let Some(overshoot) = Self::get_index_overshoot(center_text_row, self.cursor_row, cursor_row_delta) {
+        if let Some(overshoot) = Self::get_index_overshoot(
+            center_text_row,
+            self.cursor_row,
+            cursor_row_delta,
+        ) {
             // no need to keep it centered when we reach the top or bottom
             if self.text_row >= spacing_top && cursor_row_delta < 0 {
                 return self.text_row;
             }
-            if self.text_row + text_entries_len <= self.terminal_rows - spacing_bot && cursor_row_delta > 0 {
+            if self.text_row + text_entries_len
+                <= self.terminal_rows - spacing_bot
+                && cursor_row_delta > 0
+            {
                 return self.text_row;
             }
 
@@ -53,7 +70,9 @@ impl<W: Write> Pager<W> {
         // cursor row is beyond vision -> move the text row the minimal amount to correct that
         if self.text_row + self.cursor_row < spacing_top {
             return spacing_top - self.cursor_row;
-        } else if self.text_row + self.cursor_row > self.terminal_rows - (1 + spacing_bot) {
+        } else if self.text_row + self.cursor_row
+            > self.terminal_rows - (1 + spacing_bot)
+        {
             return self.terminal_rows - (1 + spacing_bot + self.cursor_row);
         }
 
@@ -68,8 +87,11 @@ impl<W: Write> Pager<W> {
 
         if self.text_row + self.cursor_row < spacing_top + padding_top {
             return spacing_top + padding_top - self.cursor_row;
-        } else if self.text_row + self.cursor_row > self.terminal_rows - (1 + spacing_bot + padding_bot) {
-            return self.terminal_rows - (1 + spacing_bot + padding_bot + self.cursor_row);
+        } else if self.text_row + self.cursor_row
+            > self.terminal_rows - (1 + spacing_bot + padding_bot)
+        {
+            return self.terminal_rows
+                - (1 + spacing_bot + padding_bot + self.cursor_row);
         }
 
         self.text_row

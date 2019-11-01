@@ -63,7 +63,13 @@ impl<W: Write> Pager<W> {
 
         // line numbers
         for i in 0..self.terminal_rows {
-            write!(self, "{} L{}", termion::cursor::Goto(50, 1 + i as u16), i.to_string()).unwrap();
+            write!(
+                self,
+                "{} L{}",
+                termion::cursor::Goto(50, 1 + i as u16),
+                i.to_string()
+            )
+            .unwrap();
         }
 
         // padding_top debug
@@ -71,7 +77,10 @@ impl<W: Write> Pager<W> {
             write!(
                 self,
                 "{}~~~ padding_bot",
-                termion::cursor::Goto(30, (self.terminal_rows - (spacing_bot + i)) as u16)
+                termion::cursor::Goto(
+                    30,
+                    (self.terminal_rows - (spacing_bot + i)) as u16
+                )
             )
             .unwrap();
         }
@@ -95,7 +104,12 @@ impl<W: Write> Pager<W> {
             .unwrap();
         }
         for i in 0..spacing_top {
-            write!(self, "{}--- spacing_top", termion::cursor::Goto(30, 1 + i as u16)).unwrap();
+            write!(
+                self,
+                "{}--- spacing_top",
+                termion::cursor::Goto(30, 1 + i as u16)
+            )
+            .unwrap();
         }
 
         // debug info

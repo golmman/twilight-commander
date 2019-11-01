@@ -33,8 +33,16 @@ pub struct EventQueue<W: Write> {
 }
 
 impl<W: Write> EventQueue<W> {
-    pub fn new(config: Config, composer: Composer, mut pager: Pager<W>, mut path_node: PathNode) -> Self {
-        let (queue_sender, queue_receiver): (SyncSender<Event>, Receiver<Event>) = sync_channel(1024);
+    pub fn new(
+        config: Config,
+        composer: Composer,
+        mut pager: Pager<W>,
+        mut path_node: PathNode,
+    ) -> Self {
+        let (queue_sender, queue_receiver): (
+            SyncSender<Event>,
+            Receiver<Event>,
+        ) = sync_channel(1024);
 
         // TODO: PathNode should have a constructor with an expanded root
         let path_node_compare = Self::get_path_node_compare(&config);
@@ -61,7 +69,9 @@ impl<W: Write> EventQueue<W> {
         thread::spawn(move || KeyEventHandler::handle(sender1));
         thread::spawn(move || ResizeEventHandler::handle(sender2));
 
-        while let Some(_) = self.match_event(self.queue_receiver.recv().unwrap()) {}
+        while let Some(_) =
+            self.match_event(self.queue_receiver.recv().unwrap())
+        {}
         // TODO: add a channel to shut down the threads?
     }
 
@@ -69,20 +79,24 @@ impl<W: Write> EventQueue<W> {
         match event {
             Event::Key(key) => self.match_key_event(key),
             Event::Resize => {
-                self.pager
-                    .update(0, &self.text_entries, self.path_node.get_absolute_path());
+                self.pager.update(
+                    0,
+                    &self.text_entries,
+                    self.path_node.get_absolute_path(),
+                );
                 Some(())
             }
         }
     }
 
     pub fn get_path_node_compare(config: &Config) -> PathNodeCompare {
-        let path_node_compare: fn(&PathNode, &PathNode) -> Ordering = match config.behavior.path_node_sort.as_str() {
-            "dirs_bot_simple" => PathNode::compare_dirs_bot_simple,
-            "dirs_top_simple" => PathNode::compare_dirs_top_simple,
-            "none" => |_, _| Ordering::Equal,
-            _ => |_, _| Ordering::Equal,
-        };
+        let path_node_compare: fn(&PathNode, &PathNode) -> Ordering =
+            match config.behavior.path_node_sort.as_str() {
+                "dirs_bot_simple" => PathNode::compare_dirs_bot_simple,
+                "dirs_top_simple" => PathNode::compare_dirs_top_simple,
+                "none" => |_, _| Ordering::Equal,
+                _ => |_, _| Ordering::Equal,
+            };
 
         path_node_compare
     }

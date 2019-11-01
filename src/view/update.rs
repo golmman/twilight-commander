@@ -9,7 +9,11 @@ impl<W: Write> Pager<W> {
         self.terminal_rows = i32::from(terminal_rows_raw);
     }
 
-    fn update_cursor_row(&mut self, cursor_row_delta: i32, text_entries_len: i32) {
+    fn update_cursor_row(
+        &mut self,
+        cursor_row_delta: i32,
+        text_entries_len: i32,
+    ) {
         self.cursor_row += cursor_row_delta;
         if self.cursor_row < 0 {
             self.cursor_row = text_entries_len - 1;
@@ -19,7 +23,12 @@ impl<W: Write> Pager<W> {
         }
     }
 
-    pub fn update(&mut self, cursor_row_delta: i32, text_entries: &[String], header_text: String) {
+    pub fn update(
+        &mut self,
+        cursor_row_delta: i32,
+        text_entries: &[String],
+        header_text: String,
+    ) {
         self.update_terminal_size();
 
         let spacing_bot = self.config.debug.spacing_bot;
@@ -30,7 +39,9 @@ impl<W: Write> Pager<W> {
         self.update_cursor_row(cursor_row_delta, text_entries_len);
 
         self.text_row = match self.config.behavior.scrolling.as_str() {
-            "center" => self.scroll_like_center(cursor_row_delta, text_entries_len),
+            "center" => {
+                self.scroll_like_center(cursor_row_delta, text_entries_len)
+            }
             "editor" => self.scroll_like_editor(),
             _ => 0,
         };
@@ -50,14 +61,18 @@ impl<W: Write> Pager<W> {
                 let text_entry = &text_entries[index as usize];
 
                 if index == self.cursor_row {
-                    self.print_text_entry_emphasized(text_entry, 1 + spacing_top + i)
+                    self.print_text_entry_emphasized(
+                        text_entry,
+                        1 + spacing_top + i,
+                    )
                 } else {
                     self.print_text_entry(text_entry, 1 + spacing_top + i);
                 }
             }
         }
 
-        let footer_text = format!("[{}/{}]", self.cursor_row + 1, text_entries_len);
+        let footer_text =
+            format!("[{}/{}]", self.cursor_row + 1, text_entries_len);
 
         self.print_header(&header_text);
         self.print_footer(&footer_text);

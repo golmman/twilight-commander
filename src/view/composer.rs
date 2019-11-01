@@ -32,22 +32,36 @@ impl Composer {
         result
     }
 
-    fn compose_path_node_recursive(&self, path_node: &PathNode, texts: &mut Vec<String>, depth: usize) {
+    fn compose_path_node_recursive(
+        &self,
+        path_node: &PathNode,
+        texts: &mut Vec<String>,
+        depth: usize,
+    ) {
         for child in &path_node.children {
             let dir_prefix = self.get_dir_prefix(child);
             let dir_suffix = self.get_dir_suffix(child);
             let indent = self.get_indent(depth);
 
-            let text = format!("{}{}{}{}", indent, dir_prefix, child.display_text.clone(), dir_suffix,);
+            let text = format!(
+                "{}{}{}{}",
+                indent,
+                dir_prefix,
+                child.display_text.clone(),
+                dir_suffix,
+            );
             texts.push(text);
             self.compose_path_node_recursive(child, texts, depth + 1);
         }
     }
 
     fn get_dir_prefix(&self, path_node: &PathNode) -> String {
-        let err_char = if self.config.composition.use_utf8 { '⨯' } else { 'x' };
-        let expanded_char = if self.config.composition.use_utf8 { '▼' } else { 'v' };
-        let reduced_char = if self.config.composition.use_utf8 { '▶' } else { '>' };
+        let (err_char, expanded_char, reduced_char) =
+            if self.config.composition.use_utf8 {
+                ('⨯', '▼', '▶')
+            } else {
+                ('x', 'v', '>')
+            };
 
         let expanded_indicator = if path_node.is_err {
             err_char

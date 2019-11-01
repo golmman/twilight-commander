@@ -26,8 +26,11 @@ impl<W: Write> EventQueue<W> {
     }
 
     fn update_pager(&mut self, cursor_delta: i32) {
-        self.pager
-            .update(cursor_delta, &self.text_entries, self.path_node.get_absolute_path());
+        self.pager.update(
+            cursor_delta,
+            &self.text_entries,
+            self.path_node.get_absolute_path(),
+        );
     }
 }
 
@@ -63,7 +66,9 @@ mod tests {
     fn match_key_event_quit_test() {
         let result = {
             let mut event_queue = prepare_event_queue();
-            event_queue.match_key_event(Key::from(event_queue.config.keybinding.quit.clone()))
+            event_queue.match_key_event(Key::from(
+                event_queue.config.keybinding.quit.clone(),
+            ))
         };
 
         assert!(result.is_none());
@@ -73,7 +78,9 @@ mod tests {
     fn match_key_event_reload_test() {
         let result = {
             let mut event_queue = prepare_event_queue();
-            event_queue.match_key_event(Key::from(event_queue.config.keybinding.reload.clone()))
+            event_queue.match_key_event(Key::from(
+                event_queue.config.keybinding.reload.clone(),
+            ))
         };
 
         assert!(result.is_some());
@@ -83,7 +90,9 @@ mod tests {
     fn match_key_event_file_action_test() {
         let result = {
             let mut event_queue = prepare_event_queue();
-            event_queue.match_key_event(Key::from(event_queue.config.keybinding.file_action.clone()))
+            event_queue.match_key_event(Key::from(
+                event_queue.config.keybinding.file_action.clone(),
+            ))
         };
 
         assert!(result.is_some());
@@ -93,7 +102,9 @@ mod tests {
     fn match_key_event_entry_up_test() {
         let result = {
             let mut event_queue = prepare_event_queue();
-            event_queue.match_key_event(Key::from(event_queue.config.keybinding.entry_up.clone()))
+            event_queue.match_key_event(Key::from(
+                event_queue.config.keybinding.entry_up.clone(),
+            ))
         };
 
         assert!(result.is_some());
@@ -103,7 +114,9 @@ mod tests {
     fn match_key_event_entry_down_test() {
         let result = {
             let mut event_queue = prepare_event_queue();
-            event_queue.match_key_event(Key::from(event_queue.config.keybinding.entry_down.clone()))
+            event_queue.match_key_event(Key::from(
+                event_queue.config.keybinding.entry_down.clone(),
+            ))
         };
 
         assert!(result.is_some());
@@ -113,7 +126,9 @@ mod tests {
     fn match_key_event_collapse_dir_test() {
         let result = {
             let mut event_queue = prepare_event_queue();
-            event_queue.match_key_event(Key::from(event_queue.config.keybinding.collapse_dir.clone()))
+            event_queue.match_key_event(Key::from(
+                event_queue.config.keybinding.collapse_dir.clone(),
+            ))
         };
 
         assert!(result.is_some());
@@ -123,7 +138,9 @@ mod tests {
     fn match_key_event_expand_dir_test() {
         let result = {
             let mut event_queue = prepare_event_queue();
-            event_queue.match_key_event(Key::from(event_queue.config.keybinding.expand_dir.clone()))
+            event_queue.match_key_event(Key::from(
+                event_queue.config.keybinding.expand_dir.clone(),
+            ))
         };
 
         assert!(result.is_some());

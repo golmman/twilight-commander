@@ -42,10 +42,12 @@ mod tests {
         path_node.expand_dir(&TreeIndex::from(vec![1, 0]), path_node_compare);
         assert_eq!(23, composer.compose_path_node(&path_node).len());
 
-        path_node.expand_dir(&TreeIndex::from(vec![1, 0, 2]), path_node_compare);
+        path_node
+            .expand_dir(&TreeIndex::from(vec![1, 0, 2]), path_node_compare);
         assert_eq!(26, composer.compose_path_node(&path_node).len());
 
-        path_node.expand_dir(&TreeIndex::from(vec![1, 0, 2, 1]), path_node_compare);
+        path_node
+            .expand_dir(&TreeIndex::from(vec![1, 0, 2, 1]), path_node_compare);
         assert_eq!(29, composer.compose_path_node(&path_node).len());
 
         // tree_index_to_flat_index
@@ -112,10 +114,12 @@ mod tests {
         path_node.expand_dir(&TreeIndex::from(vec![11, 3]), path_node_compare);
         assert_eq!(23, composer.compose_path_node(&path_node).len());
 
-        path_node.expand_dir(&TreeIndex::from(vec![11, 3, 3]), path_node_compare);
+        path_node
+            .expand_dir(&TreeIndex::from(vec![11, 3, 3]), path_node_compare);
         assert_eq!(26, composer.compose_path_node(&path_node).len());
 
-        path_node.expand_dir(&TreeIndex::from(vec![11, 3, 3, 1]), path_node_compare);
+        path_node
+            .expand_dir(&TreeIndex::from(vec![11, 3, 3, 1]), path_node_compare);
         assert_eq!(29, composer.compose_path_node(&path_node).len());
 
         // collapse_dir
