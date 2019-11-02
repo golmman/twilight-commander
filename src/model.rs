@@ -16,7 +16,7 @@ mod tests {
         let mut config = Config::default();
         config.setup.working_dir = String::from("./tests/test_dirs");
 
-        let composer = Composer::new(config.clone());
+        let composer = Composer::from(config.clone());
         let mut path_node = PathNode::from(config.setup.working_dir);
         let path_node_compare = PathNode::compare_dirs_top_simple;
         assert_eq!(0, composer.compose_path_node(&path_node).len());
@@ -88,7 +88,7 @@ mod tests {
         let mut config = Config::default();
         config.setup.working_dir = String::from("./tests/test_dirs");
 
-        let composer = Composer::new(config.clone());
+        let composer = Composer::from(config.clone());
         let mut path_node = PathNode::from(config.setup.working_dir);
         let path_node_compare = PathNode::compare_dirs_bot_simple;
         assert_eq!(0, composer.compose_path_node(&path_node).len());

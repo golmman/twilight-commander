@@ -5,12 +5,13 @@ pub struct Composer {
     config: Config,
 }
 
-impl Composer {
-    // TODO: from?
-    pub fn new(config: Config) -> Self {
+impl From<Config> for Composer {
+    fn from(config: Config) -> Self {
         Self { config }
     }
+}
 
+impl Composer {
     pub fn truncate_string(string: &str, length: usize) -> String {
         if length > string.len() {
             return String::from(string);

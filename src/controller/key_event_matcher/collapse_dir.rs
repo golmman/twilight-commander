@@ -5,23 +5,25 @@ use std::io::Write;
 impl<W: Write> EventQueue<W> {
     pub fn do_collapse_dir(&mut self) -> Option<()> {
         let tree_index = self
-            .path_node
+            .path_node_root
             .flat_index_to_tree_index(self.pager.cursor_row as usize);
 
         let cursor_delta = self.get_parent_dir_cursor_delta(&tree_index);
 
         if cursor_delta == 0 {
-            self.path_node.collapse_dir(&tree_index);
+            self.path_node_root.collapse_dir(&tree_index);
         }
 
-        self.text_entries = self.composer.compose_path_node(&self.path_node);
+        self.text_entries =
+            self.composer.compose_path_node(&self.path_node_root);
 
         self.update_pager(cursor_delta);
         Some(())
     }
 
     fn get_parent_dir_cursor_delta(&mut self, tree_index: &TreeIndex) -> i32 {
-        let child_path_node = self.path_node.get_child_path_node(tree_index);
+        let child_path_node =
+            self.path_node_root.get_child_path_node(tree_index);
         if child_path_node.is_dir && child_path_node.is_expanded {
             return 0;
         }
@@ -32,7 +34,7 @@ impl<W: Write> EventQueue<W> {
         }
 
         let parent_flat_index = self
-            .path_node
+            .path_node_root
             .tree_index_to_flat_index(&parent_path_node_tree_index)
             as i32;
 
@@ -80,14 +82,14 @@ mod tests {
     fn prepare_event_queue() -> EventQueue<Vec<u8>> {
         let config = Config::default();
 
-        let composer = Composer::new(config.clone());
+        let composer = Composer::from(config.clone());
         let pager = Pager::new(config.clone(), Vec::new());
         let path_node = PathNode::from(config.setup.working_dir.clone());
 
         let mut event_queue =
             EventQueue::new(config, composer, pager, path_node);
 
-        event_queue.path_node = get_expanded_path_node();
+        event_queue.path_node_root = get_expanded_path_node();
 
         event_queue
     }

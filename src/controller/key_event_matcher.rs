@@ -29,7 +29,7 @@ impl<W: Write> EventQueue<W> {
         self.pager.update(
             cursor_delta,
             &self.text_entries,
-            self.path_node.get_absolute_path(),
+            self.path_node_root.get_absolute_path(),
         );
     }
 }
@@ -45,7 +45,7 @@ mod tests {
     fn prepare_event_queue() -> EventQueue<Vec<u8>> {
         let config = Config::default();
 
-        let composer = Composer::new(config.clone());
+        let composer = Composer::from(config.clone());
         let pager = Pager::new(config.clone(), Vec::new());
         let path_node = PathNode::from(config.setup.working_dir.clone());
 

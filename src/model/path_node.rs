@@ -1,4 +1,5 @@
 use crate::model::compare_functions::PathNodeCompare;
+use crate::model::config::Config;
 use crate::model::tree_index::TreeIndex;
 use std::fs::canonicalize;
 use std::path::PathBuf;
@@ -41,6 +42,14 @@ impl From<String> for PathNode {
 }
 
 impl PathNode {
+    pub fn new_expanded(config: Config) -> Self {
+        let mut path_node = Self::from(config.setup.working_dir.clone());
+        let path_node_compare = Self::get_path_node_compare(&config);
+        path_node.expand_dir(&TreeIndex::new(), path_node_compare);
+
+        path_node
+    }
+
     pub fn get_absolute_path(&self) -> String {
         let canonicalized_path = canonicalize(self.path.as_path()).unwrap();
         canonicalized_path.to_str().unwrap().to_string()

@@ -7,7 +7,7 @@ use std::fmt::Result;
 
 impl Debug for PathNode {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        let composer = Composer::new(Config::new());
+        let composer = Composer::from(Config::new());
 
         let entries = composer.compose_path_node(self);
 

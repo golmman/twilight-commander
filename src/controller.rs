@@ -4,10 +4,8 @@ use crate::model::compare_functions::PathNodeCompare;
 use crate::model::config::Config;
 use crate::model::event::Event;
 use crate::model::path_node::PathNode;
-use crate::model::tree_index::TreeIndex;
 use crate::view::composer::Composer;
 use crate::view::Pager;
-use std::cmp::Ordering;
 use std::io::Write;
 use std::sync::mpsc::sync_channel;
 use std::sync::mpsc::Receiver;
@@ -22,8 +20,7 @@ pub struct EventQueue<W: Write> {
     config: Config,
     composer: Composer,
     pager: Pager<W>,
-    // TODO: better name: root_path_node?
-    path_node: PathNode,
+    path_node_root: PathNode,
     path_node_compare: PathNodeCompare,
     queue_receiver: Receiver<Event>,
     queue_sender: SyncSender<Event>,
@@ -37,25 +34,23 @@ impl<W: Write> EventQueue<W> {
         config: Config,
         composer: Composer,
         mut pager: Pager<W>,
-        mut path_node: PathNode,
+        path_node_root: PathNode,
     ) -> Self {
         let (queue_sender, queue_receiver): (
             SyncSender<Event>,
             Receiver<Event>,
         ) = sync_channel(1024);
 
-        // TODO: PathNode should have a constructor with an expanded root
-        let path_node_compare = Self::get_path_node_compare(&config);
-        path_node.expand_dir(&TreeIndex::from(Vec::new()), path_node_compare);
+        let path_node_compare = PathNode::get_path_node_compare(&config);
 
-        let text_entries = composer.compose_path_node(&path_node);
-        pager.update(0, &text_entries, path_node.get_absolute_path());
+        let text_entries = composer.compose_path_node(&path_node_root);
+        pager.update(0, &text_entries, path_node_root.get_absolute_path());
 
         Self {
             config,
             composer,
             pager,
-            path_node,
+            path_node_root,
             path_node_compare,
             queue_receiver,
             queue_sender,
@@ -82,22 +77,10 @@ impl<W: Write> EventQueue<W> {
                 self.pager.update(
                     0,
                     &self.text_entries,
-                    self.path_node.get_absolute_path(),
+                    self.path_node_root.get_absolute_path(),
                 );
                 Some(())
             }
         }
-    }
-
-    pub fn get_path_node_compare(config: &Config) -> PathNodeCompare {
-        let path_node_compare: fn(&PathNode, &PathNode) -> Ordering =
-            match config.behavior.path_node_sort.as_str() {
-                "dirs_bot_simple" => PathNode::compare_dirs_bot_simple,
-                "dirs_top_simple" => PathNode::compare_dirs_top_simple,
-                "none" => |_, _| Ordering::Equal,
-                _ => |_, _| Ordering::Equal,
-            };
-
-        path_node_compare
     }
 }
