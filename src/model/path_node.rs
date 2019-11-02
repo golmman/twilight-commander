@@ -167,7 +167,8 @@ impl PathNode {
     }
 
     pub fn tree_index_to_flat_index(&self, tree_index: &TreeIndex) -> usize {
-        // We count the root directory, hence we have to subtract 1 to get the proper index.
+        // We count the root directory, hence we have to subtract 1 to get the
+        // proper index.
         self.tree_index_to_flat_index_rec(tree_index, &TreeIndex::new()) - 1
     }
 

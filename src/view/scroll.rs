@@ -22,7 +22,6 @@ impl<W: Write> Pager<W> {
         None
     }
 
-    // TODO: when jumping to the parent dir via collapse_dir, dont force center
     pub fn scroll_like_center(
         &self,
         cursor_row_delta: i32,
@@ -35,8 +34,8 @@ impl<W: Write> Pager<W> {
             + (self.terminal_rows - (spacing_bot + spacing_top)) / 2;
         let last_text_row = self.terminal_rows - (self.text_row + spacing_bot);
 
-        // re-center a cursor row that is under the center (last text entry was visible)
-        // in the case that a subdirectory is opened
+        // re-center a cursor row that is below the center (last text entry was
+        // visible) in the case that a subdirectory is opened
         // in such a way that the bottom is not visible anymore
         if cursor_row_delta == 0
             && self.cursor_row - center_text_row > 0
@@ -63,11 +62,19 @@ impl<W: Write> Pager<W> {
                 return self.text_row;
             }
 
+            // Prevent violating the spacing when centering on the cursor row.
+            // E.g. when jumping to the parent directory and it is the topmost
+            // entry do not want it centered.
+            if self.text_row - overshoot > spacing_top {
+                return spacing_top;
+            }
+
             // keep it centered
             return self.text_row - overshoot;
         }
 
-        // cursor row is beyond vision -> move the text row the minimal amount to correct that
+        // cursor row is beyond vision -> move the text row the minimal amount
+        // to correct that
         if self.text_row + self.cursor_row < spacing_top {
             return spacing_top - self.cursor_row;
         } else if self.text_row + self.cursor_row
@@ -214,6 +221,32 @@ mod tests {
             };
 
             assert_eq!(-4, text_row);
+        }
+
+        #[test]
+        fn scroll_like_center_cursor_with_overshoot() {
+            let text_row = {
+                let mut pager = prepare_pager();
+                println!("{}", pager.text_row);
+                pager.cursor_row = 13;
+                pager.text_row = -10;
+                pager.scroll_like_center(-3, 123)
+            };
+
+            assert_eq!(-8, text_row);
+        }
+
+        #[test]
+        fn scroll_like_center_cursor_top_most_overshoot() {
+            let text_row = {
+                let mut pager = prepare_pager();
+                println!("{}", pager.text_row);
+                pager.cursor_row = 0;
+                pager.text_row = -10;
+                pager.scroll_like_center(-16, 123)
+            };
+
+            assert_eq!(1, text_row);
         }
     }
 
