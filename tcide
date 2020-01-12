@@ -12,7 +12,7 @@
 
 
 if [[ -d $1 ]]; then
-    DIRNAME="$(readlink -f $1)"
+    DIRNAME="$(readlink -f "$1")"
 elif [[ -f $1 ]]; then
     echo "'$1' is a file, please pass a directory"
     exit 1
@@ -28,7 +28,7 @@ echo "opening $DIRNAME"
 # tmux does not allow reuse of session names, so ths seems unecessary
 
 tmux new-session \
-    -s $DIRNAME \
+    -s "$DIRNAME" \
     -d twilight-commander \
         --behavior.file_action="vim --servername $DIRNAME --remote-tab %s" \
         --setup.working_dir="$DIRNAME" \
@@ -37,4 +37,7 @@ tmux new-session \
     split-window -v \; \
     resize-pane -L 40 \; \
     resize-pane -D 10 \; \
+    set-option set-titles on \; \
+    set-option set-titles-string "$1" \; \
     attach
+
