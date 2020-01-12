@@ -13,6 +13,7 @@
 
 if [[ -d $1 ]]; then
     DIRNAME="$(readlink -f "$1")"
+    BASENAME="$(basename "$DIRNAME")"
 elif [[ -f $1 ]]; then
     echo "'$1' is a file, please pass a directory"
     exit 1
@@ -38,6 +39,6 @@ tmux new-session \
     resize-pane -L 40 \; \
     resize-pane -D 10 \; \
     set-option set-titles on \; \
-    set-option set-titles-string "$1" \; \
+    set-option set-titles-string "$BASENAME" \; \
     attach
 
