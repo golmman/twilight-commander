@@ -1,0 +1,53 @@
+[behavior]
+# command interpreted by bash when pressing the file_action key
+file_action = "true"
+
+# determines the compare function used for sorting entries
+# enum: none, dirs_top_simple, dirs_bot_simple
+# TODO: rename to entry_sort
+path_node_sort = "dirs_top_simple"
+
+# the scrollung algorithm used
+# enum: center, editor
+scrolling = "center"
+
+# the amount of entries skipped when the skip keys are pressed
+skip_amount = 5
+
+
+[composition]
+# indention used for subentries
+indent = 2
+
+# when true shows visual markers for indention whitespaces
+show_indent = false
+
+# when true uses utf8 characters
+use_utf8 = true
+
+[debug]
+# enables debug mode
+enabled = false
+
+# the minimum distance of the highlighted entry to the spacing
+padding_bot = 3
+padding_top = 3
+
+# the number of lines not uses for entries
+spacing_bot = 2
+spacing_top = 2
+
+[keybinding]
+collapse_dir = "h"
+entry_down = "j"
+entry_up = "k"
+expand_dir = "l"
+file_action = "return"
+quit = "q"
+reload = "r"
+skip_up = "ctrl+k"
+skip_down = "ctrl+j"
+
+[setup]
+# the working directory used when starting
+working_dir = "."
