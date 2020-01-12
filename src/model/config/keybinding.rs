@@ -22,6 +22,12 @@ pub struct Keybinding {
 
     #[serde(default = "Keybinding::default_reload")]
     pub reload: String,
+
+    #[serde(default = "Keybinding::default_skip_down")]
+    pub skip_down: String,
+
+    #[serde(default = "Keybinding::default_skip_up")]
+    pub skip_up: String,
 }
 
 impl Default for Keybinding {
@@ -34,6 +40,8 @@ impl Default for Keybinding {
             collapse_dir: Self::default_collapse_dir(),
             file_action: Self::default_file_action(),
             reload: Self::default_reload(),
+            skip_down: Self::default_skip_down(),
+            skip_up: Self::default_skip_up(),
         }
     }
 }
@@ -65,5 +73,13 @@ impl Keybinding {
 
     fn default_reload() -> String {
         String::from("r")
+    }
+
+    fn default_skip_down() -> String {
+        String::from("ctrl+down")
+    }
+
+    fn default_skip_up() -> String {
+        String::from("ctrl+up")
     }
 }

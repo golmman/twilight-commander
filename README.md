@@ -104,7 +104,10 @@ sudo make install
 
 ## Ideas for improvements
 
+* modes (similar to vim)
+* help/debug screen
 * **advanced navigation**
+* **remove termion dependency**
   * ~~jump to parent directory~~
   * skip x entries by holding a modifier key
   * collapse the current parent directory
@@ -139,3 +142,4 @@ sudo make install
   * mark hits
 * nnn like status updates in the footer (permission denied, ...)
 * error log file
+

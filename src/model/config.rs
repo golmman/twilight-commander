@@ -41,9 +41,7 @@ pub struct Config {
 
 impl Config {
     pub fn new() -> Self {
-        let config = Self::read_config_file().unwrap_or_else(Self::default);
-
-        Self::parse_args(config, args().skip(1))
+        let config = Self::read_config_file().unwrap_or_else(Self::default); Self::parse_args(config, args().skip(1))
     }
 
     #[rustfmt::skip]
@@ -57,6 +55,7 @@ impl Config {
                 "--behavior.file_action" => config.behavior.file_action = Self::parse_value((key, value)),
                 "--behavior.path_node_sort" => config.behavior.path_node_sort = Self::parse_value((key, value)),
                 "--behavior.scrolling" => config.behavior.scrolling = Self::parse_value((key, value)),
+                "--behavior.skip_amount" => config.behavior.skip_amount = Self::parse_value((key, value)),
                 "--color.background" => config.color.background = Self::parse_value((key, value)),
                 "--color.foreground" => config.color.foreground = Self::parse_value((key, value)),
                 "--composition.indent" => config.composition.indent = Self::parse_value((key, value)),
@@ -74,6 +73,8 @@ impl Config {
                 "--keybinding.file_action" => config.keybinding.file_action = Self::parse_value((key, value)),
                 "--keybinding.quit" => config.keybinding.quit = Self::parse_value((key, value)),
                 "--keybinding.reload" => config.keybinding.reload = Self::parse_value((key, value)),
+                "--keybinding.skip_up" => config.keybinding.skip_up = Self::parse_value((key, value)),
+                "--keybinding.skip_down" => config.keybinding.skip_down = Self::parse_value((key, value)),
                 "--setup.working_dir" => config.setup.working_dir = Self::parse_value((key, value)),
 
                 "--help" => print_help(),

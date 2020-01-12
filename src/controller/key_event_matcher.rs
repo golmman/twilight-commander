@@ -9,6 +9,8 @@ mod expand_dir;
 mod file_action;
 mod quit;
 mod reload;
+mod skip_up;
+mod skip_down;
 
 impl<W: Write> EventQueue<W> {
     #[rustfmt::skip]
@@ -22,6 +24,8 @@ impl<W: Write> EventQueue<W> {
         else if key == Key::from(ck.file_action) { self.do_file_action() }
         else if key == Key::from(ck.quit) { self.do_quit() }
         else if key == Key::from(ck.reload) { self.do_reload() }
+        else if key == Key::from(ck.skip_down) { self.do_skip_down() }
+        else if key == Key::from(ck.skip_up) { self.do_skip_up() }
         else { Some(()) }
     }
 

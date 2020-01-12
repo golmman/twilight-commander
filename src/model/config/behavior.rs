@@ -10,6 +10,9 @@ pub struct Behavior {
 
     #[serde(default = "Behavior::default_scrolling")]
     pub scrolling: String,
+
+    #[serde(default = "Behavior::default_skip_amount")]
+    pub skip_amount: i32,
 }
 
 impl Default for Behavior {
@@ -18,6 +21,7 @@ impl Default for Behavior {
             file_action: Self::default_file_action(),
             path_node_sort: Self::default_path_node_sort(),
             scrolling: Self::default_scrolling(),
+            skip_amount: Self::default_skip_amount(),
         }
     }
 }
@@ -33,5 +37,9 @@ impl Behavior {
 
     fn default_scrolling() -> String {
         String::from("center")
+    }
+
+    fn default_skip_amount() -> i32 {
+        5
     }
 }
