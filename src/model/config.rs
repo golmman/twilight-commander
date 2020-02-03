@@ -4,8 +4,10 @@ use crate::model::config::composition::Composition;
 use crate::model::config::debug::Debug;
 use crate::model::config::keybinding::Keybinding;
 use crate::model::config::setup::Setup;
+use crate::utils::get_config_dir;
 use crate::utils::print_help;
 use crate::utils::read_file;
+use log::info;
 use serde::Deserialize;
 use std::env::args;
 use std::process::exit;
@@ -41,7 +43,9 @@ pub struct Config {
 
 impl Config {
     pub fn new() -> Self {
-        let config = Self::read_config_file().unwrap_or_else(Self::default);
+        info!("initializing config");
+
+        let config = Self::read_config_file().unwrap_or_default();
 
         Self::parse_args(config, args().skip(1))
     }
@@ -76,7 +80,7 @@ impl Config {
                 "--keybinding.reload" => config.keybinding.reload = Self::parse_value((key, value)),
                 "--setup.working_dir" => config.setup.working_dir = Self::parse_value((key, value)),
 
-                "--help" => print_help(),
+                "--help" | "--version" => print_help(),
                 "--" => break,
                 _ => {
                     println!("unknown option {}", key);
@@ -107,24 +111,19 @@ impl Config {
         })
     }
 
-    fn read_config_file() -> Option<Self> {
-        let config_path =
-            if let Ok(xdg_config_home) = std::env::var("XDG_CONFIG_HOME") {
-                format!("{}/twilight-commander.toml", xdg_config_home)
-            } else if let Ok(home) = std::env::var("HOME") {
-                format!(
-                    "{}/.config/twilight-commander/twilight-commander.toml",
-                    home
-                )
-            } else {
-                String::new()
-            };
+    fn read_config_file() -> std::io::Result<Self> {
+        let config_dir = get_config_dir()?;
 
-        if let Ok(config_file) = read_file(&config_path) {
-            return toml::from_str(&config_file).ok();
-        }
+        let config_file = format!("{}/twilight-commander.toml", config_dir);
 
-        None
+        let config_file_content = read_file(&config_file)?;
+
+        toml::from_str(&config_file_content).map_err(|_| {
+            std::io::Error::new(
+                std::io::ErrorKind::NotFound,
+                "could not read the config file",
+            )
+        })
     }
 }
 

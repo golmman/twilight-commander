@@ -1,5 +1,6 @@
 use crate::model::config::Config;
 use crate::view::composer::Composer;
+use log::info;
 use std::io::Write;
 
 pub mod composer;
@@ -18,6 +19,8 @@ pub struct Pager<W: Write> {
 
 impl<W: Write> Pager<W> {
     pub fn new(config: Config, mut out: W) -> Self {
+        info!("initializing pager");
+
         write!(
             out,
             "{}{}{}",
