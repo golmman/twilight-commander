@@ -82,6 +82,11 @@ Specified with the option `--behaviour.scrolling` (default = `center`)
 ### Utf-8 support
 In case your terminal does not support utf-8 you can disable it with `--composition.use_utf8=false`.
 
+### Logs
+Logs are written to
+1. `$XDG_CONFIG_HOME/tc.log` if XDG_CONFIG_HOME is defined
+2. else they are placed in `$HOME/.config/twilight-commander/tc.log`
+
 ## Usage with tmux and vim
 
 ![Screenshot](https://github.com/golmman/twilight-commander/blob/master/screenshots/tcide.png "tmux + vim + twilight-commander")
@@ -104,6 +109,14 @@ sudo make install
 
 ## Ideas for improvements
 
+* **automatic reload**
+* **logging**
+  * ~~to log file~~
+  * limit log file length
+* **more colors, configurable**
+  * git colors (indicating modified or new files)
+* **improved sorting**
+  * sort case insensitivly
 * **advanced navigation**
   * ~~jump to parent directory~~
   * skip x entries by holding a modifier key
@@ -117,8 +130,6 @@ sudo make install
   * https://invisible-island.net/ncurses/man/resizeterm.3x.html
   * https://linux.die.net/man/1/resize
   * https://stackoverflow.com/questions/4738803/resize-terminal-and-scrolling-problem-with-ncurses#4739108
-* recursive reload
-* more colors, configurable
 * directory entry stats
 * directory entry management
   * copy
@@ -129,7 +140,6 @@ sudo make install
   * remove
   * rename
 * subdirectory caching
-* improved sorting
 * --help screen with info to all command line options
   * [clap](https://crates.io/crates/clap)
   * [gumdrop](https://crates.io/crates/gumdrop)
@@ -138,4 +148,3 @@ sudo make install
   * case insensitive wildcard
   * mark hits
 * nnn like status updates in the footer (permission denied, ...)
-* error log file

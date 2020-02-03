@@ -6,6 +6,7 @@ use crate::model::event::Event;
 use crate::model::path_node::PathNode;
 use crate::view::composer::Composer;
 use crate::view::Pager;
+use log::info;
 use std::io::Write;
 use std::sync::mpsc::sync_channel;
 use std::sync::mpsc::Receiver;
@@ -36,6 +37,8 @@ impl<W: Write> EventQueue<W> {
         mut pager: Pager<W>,
         path_node_root: PathNode,
     ) -> Self {
+        info!("initializing event queue");
+
         let (queue_sender, queue_receiver): (
             SyncSender<Event>,
             Receiver<Event>,

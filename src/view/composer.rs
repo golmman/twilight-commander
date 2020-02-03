@@ -1,5 +1,6 @@
 use crate::model::config::Config;
 use crate::model::path_node::PathNode;
+use log::info;
 
 pub struct Composer {
     config: Config,
@@ -7,6 +8,7 @@ pub struct Composer {
 
 impl From<Config> for Composer {
     fn from(config: Config) -> Self {
+        info!("initializing composer");
         Self { config }
     }
 }
