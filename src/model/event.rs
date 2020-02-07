@@ -31,7 +31,7 @@ impl From<String> for Key {
 }
 
 fn convert_str_to_termion_event(s: &str) -> TEvent {
-    if s.len() == 1 {
+    if s.chars().count() == 1 {
         return TEvent::Key(TKey::Char(s.chars().last().unwrap()));
     }
 
