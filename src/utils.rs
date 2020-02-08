@@ -65,13 +65,13 @@ _|_    o|o _ |__|_  _ _ ._ _ ._ _  _.._  _| _ ._
 
 pub fn get_config_dir() -> std::io::Result<String> {
     if let Ok(xdg_config_home) = std::env::var("XDG_CONFIG_HOME") {
-        return Ok(xdg_config_home);
+        Ok(xdg_config_home)
     } else if let Ok(home) = std::env::var("HOME") {
-        return Ok(format!("{}/.config/twilight-commander", home));
+        Ok(format!("{}/.config/twilight-commander", home))
     } else {
-        return Err(std::io::Error::new(
+        Err(std::io::Error::new(
             std::io::ErrorKind::NotFound,
             "no HOME or XDG_CONFIG_HOME variable is defined",
-        ));
-    };
+        ))
+    }
 }
