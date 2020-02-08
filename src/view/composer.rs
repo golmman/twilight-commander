@@ -14,17 +14,22 @@ impl From<Config> for Composer {
 }
 
 impl Composer {
-    pub fn truncate_string(string: &str, length: usize) -> String {
-        if length > string.len() {
+    pub fn truncate_string(string: &str, desired_char_count: usize) -> String {
+        if desired_char_count < 1 {
+            return String::new();
+        }
+
+        if desired_char_count >= string.chars().count() {
             return String::from(string);
         }
 
-        let split_at = length - 1;
-        let mut shortened = String::from(string.split_at(split_at as usize).0);
+        let truncated = match string.char_indices().nth(desired_char_count - 1)
+        {
+            None => string,
+            Some((idx, _)) => &string[..idx],
+        };
 
-        shortened.push('~');
-
-        shortened
+        format!("{}~", truncated)
     }
 
     pub fn compose_path_node(&self, path_node: &PathNode) -> Vec<String> {
@@ -100,5 +105,21 @@ impl Composer {
         let indent = " ".repeat(self.config.composition.indent as usize - 1);
 
         format!("{}{}", indent_char, indent).repeat(depth)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn truncate_string_test() {
+        let tc = Composer::truncate_string;
+        assert_eq!(tc("hello world", 5), "hell~");
+        assert_eq!(tc("hello world", 1), "~");
+        assert_eq!(tc("hello world", 0), "");
+        assert_eq!(tc("aaa▶bbb▶ccc", 8), "aaa▶bbb~");
+        assert_eq!(tc("aaa▶bbb▶ccc", 6), "aaa▶b~");
+        assert_eq!(tc("aaa▶bbb▶ccc", 4), "aaa~");
     }
 }
