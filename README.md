@@ -121,6 +121,7 @@ sudo make install
   * ~~jump to parent directory~~
   * skip x entries by holding a modifier key
   * collapse the current parent directory
+* **improve tcide to store vim sessions**
 * add a proper Makefile
   * https://sagiegurari.github.io/cargo-make/
 * better response to terminal resize events: in some terminals response is too slow, text is wrapped
