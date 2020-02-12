@@ -10,25 +10,27 @@
 # make
 # sudo make install
 
-
-if [[ -d $1 ]]; then
-    DIRNAME="$(readlink -f "$1")"
-    BASENAME="$(basename "$DIRNAME")"
-elif [[ -f $1 ]]; then
-    echo "'$1' is a file, please pass a directory"
-    exit 1
+if [ -z "$1" ]; then
+    INPUT_DIR='.'
+elif [ -d "$1" ]; then
+    INPUT_DIR="$1"
+elif [ -f "$1" ]; then
+    INPUT_DIR="$(dirname "$1")"
 else
     echo "tcide: opens a tmux session with vim and integrated twilight-commander"
-    echo "usage: tcide <directory>"
+    echo "usage: tcide [directory or file]"
     exit 1
 fi
+
+DIRNAME="$(readlink -f "$INPUT_DIR")"
+BASENAME="$(basename "$DIRNAME")"
 
 echo "opening $DIRNAME"
 
 # TODO: check for used vim servers with 'vim --serverlist'?
 # tmux does not allow reuse of session names, so ths seems unecessary
 
-tmux new-session \
+tmux -2 new-session -x "$(tput cols)" -y "$(tput lines)" \
     -s "$DIRNAME" \
     -d twilight-commander \
         --behavior.file_action="vim --servername $DIRNAME --remote-tab %s" \
@@ -36,9 +38,8 @@ tmux new-session \
     \; \
     split-window -h "vim --servername $DIRNAME" \; \
     split-window -v \; \
-    resize-pane -L 40 \; \
-    resize-pane -D 10 \; \
+    resize-pane -t 0 -x 30 \; \
+    resize-pane -t 2 -y 15 \; \
     set-option set-titles on \; \
     set-option set-titles-string "$BASENAME" \; \
     attach
-
