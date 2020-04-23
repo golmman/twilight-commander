@@ -7,7 +7,7 @@ use crate::model::config::setup::Setup;
 use crate::utils::get_config_dir;
 use crate::utils::print_help;
 use crate::utils::read_file;
-use log::{ info, warn };
+use log::{info, warn};
 use serde::Deserialize;
 use std::env::args;
 use std::process::exit;
