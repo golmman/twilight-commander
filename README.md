@@ -109,10 +109,11 @@ sudo make install
 
 ## Ideas for improvements
 
-* **automatic reload**
-* **logging**
-  * ~~to log file~~
-  * limit log file length
+* **configuration of 'on close'-event scripts**
+* **storing sessions**
+* **improved reload**
+  * ~~preserve expanded tree on reload~~
+  * automatic reload
 * **more colors, configurable**
   * git colors (indicating modified or new files)
 * **improved sorting**
@@ -140,7 +141,6 @@ sudo make install
   * ~~open with custom command~~
   * remove
   * rename
-* subdirectory caching
 * --help screen with info to all command line options
   * [clap](https://crates.io/crates/clap)
   * [gumdrop](https://crates.io/crates/gumdrop)
@@ -149,3 +149,6 @@ sudo make install
   * case insensitive wildcard
   * mark hits
 * nnn like status updates in the footer (permission denied, ...)
+* logging
+  * ~~to log file~~
+  * limit log file length
