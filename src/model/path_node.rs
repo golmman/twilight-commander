@@ -7,6 +7,7 @@ use std::path::PathBuf;
 
 mod debug;
 
+#[derive(Clone)]
 pub struct PathNode {
     pub children: Vec<PathNode>,
     pub display_text: String,
@@ -97,7 +98,9 @@ impl PathNode {
     ) {
         let mut path_node = self;
         for i in &tree_index.index {
-            path_node = &mut path_node.children[*i];
+            if path_node.children.len() > *i {
+                path_node = &mut path_node.children[*i];
+            }
         }
 
         if !path_node.path.is_dir() {

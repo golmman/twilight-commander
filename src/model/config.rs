@@ -7,7 +7,7 @@ use crate::model::config::setup::Setup;
 use crate::utils::get_config_dir;
 use crate::utils::print_help;
 use crate::utils::read_file;
-use log::info;
+use log::{ info, warn };
 use serde::Deserialize;
 use std::env::args;
 use std::process::exit;
@@ -83,8 +83,7 @@ impl Config {
                 "--help" | "--version" => print_help(),
                 "--" => break,
                 _ => {
-                    println!("unknown option {}", key);
-                    exit(1);
+                    warn!("unknown option {}", key);
                 }
             }
         }
