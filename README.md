@@ -109,6 +109,7 @@ sudo make install
 
 ## Ideas for improvements
 
+* **neovim support via https://neovim.io/doc/user/api.html**
 * **configuration of 'on close'-event scripts**
 * **storing sessions**
 * **improved reload**
