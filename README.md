@@ -9,7 +9,7 @@ Developed and tested on Ubuntu 18.04 with xterm derivatives.
 
 ## Build and install
 
-### Instructions for Debian 10 or Ubuntu 18.04
+### Instructions for Debian 10 or Ubuntu 18.04/20.04
 
 | |step|description|
 |---|---|---|
@@ -91,12 +91,12 @@ Logs are written to
 
 ![Screenshot](https://github.com/golmman/twilight-commander/blob/master/screenshots/tcide.png "tmux + vim + twilight-commander")
 
-The `tcide` script opens a new tmux session with 3 panes: vim, twilight-commander and terminal.
-Hitting the file_action key (default: return) on a file entry opens it in a new vim tab.
+The `tcide_vim` and `tcide_neovim` scripts open a new tmux session with 3 panes: (neo)vim, twilight-commander and terminal.
+Hitting the file_action key (default: return) on a file entry opens it in a new tab.
 
 ### tcide requirements
 
-You need to build vim with the clientserver option:
+When using vim you need to build it with the clientserver option:
 
 ```
 git clone https://github.com/vim/vim.git
@@ -153,3 +153,4 @@ sudo make install
 * logging
   * ~~to log file~~
   * limit log file length
+* add rust doc
