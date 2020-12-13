@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# Opens a tmux session with 3 panes: nvim, twilight-commander, terminal.
+# Hitting the file_action key (default: return) on a file entry opens it in a new nvim tab.
+
+if [ -z "$1" ]; then
+    INPUT_DIR='.'
+elif [ -d "$1" ]; then
+    INPUT_DIR="$1"
+elif [ -f "$1" ]; then
+    INPUT_DIR="$(dirname "$1")"
+else
+    echo "tcide: opens a tmux session with neovim and integrated twilight-commander"
+    echo "usage: tcide [directory or file]"
+    exit 1
+fi
+
+DIRNAME="$(readlink -f "$INPUT_DIR")"
+BASENAME="$(basename "$DIRNAME")"
+
+echo "opening $DIRNAME"
+
+# The following code builds a msgpack-object (https://msgpack.org/) which
+# conforms to the rpc specification:
+# https://github.com/msgpack-rpc/msgpack-rpc/blob/master/spec.md
+# [0, 1, "nvim_command", ["tabnew test.js"]]
+#
+# The json array above is encoded to hex and then to binary.
+# The command is then sent to the named socket SOCKET_NAME
+MSGPACK_COMMAND='
+(
+    realpath --relative-to=. "%s"
+) | (
+    NVIM_COMMAND_ARG="tabnew $(cat /dev/stdin)"
+
+    LANG=C LC_ALL=C
+    LENGTH=${#NVIM_COMMAND_ARG};
+
+    if [ $LENGTH -lt 32 ]; then
+        MSGPACK_LEN_HEX=$(printf "%x" $(( 160 + $LENGTH )));
+    else
+        MSGPACK_LEN_HEX=$(printf "d9%x" $(( $LENGTH )));
+    fi;
+
+    NVIM_COMMAND_HEX="940001ac6e76696d5f636f6d6d616e6491"
+    NVIM_COMMAND_ARG_HEX=$(printf "$NVIM_COMMAND_ARG" | xxd -p -c 10000);
+
+    printf "$NVIM_COMMAND_HEX$MSGPACK_LEN_HEX$NVIM_COMMAND_ARG_HEX";
+) | (
+    xxd -r -p
+)'
+
+SOCKET_NAME="tcide_$RANDOM"
+NC_SOCKET="nc -q 0 -U $SOCKET_NAME"
+
+FILE_ACTION="$MSGPACK_COMMAND | $NC_SOCKET"
+
+tmux -2 new-session -x "$(tput cols)" -y "$(tput lines)" \
+    -s "$DIRNAME" \
+    -d twilight-commander \
+        --behavior.file_action="$FILE_ACTION" \
+        --setup.working_dir="$DIRNAME" \
+    \; \
+    split-window -h "nvim --listen $SOCKET_NAME" \; \
+    split-window -v \; \
+    resize-pane -t 0 -x 40 \; \
+    resize-pane -t 2 -y 20 \; \
+    set-option set-titles on \; \
+    set-option set-titles-string "$BASENAME" \; \
+    attach
