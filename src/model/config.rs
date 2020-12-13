@@ -11,7 +11,6 @@ use log::{info, warn};
 use serde::Deserialize;
 use std::env::args;
 use std::process::exit;
-use toml;
 
 mod behavior;
 mod color;
@@ -87,17 +86,19 @@ impl Config {
                 }
             }
         }
+
+        info!("config loaded as:\n{:?}", config);
         config
     }
 
     fn split_arg(arg: String) -> (String, String) {
-        let split_arg: Vec<&str> = arg.split('=').collect();
-
-        if split_arg.len() == 1 {
-            return (String::from(split_arg[0]), String::from(""));
+        println!("{}", arg);
+        if let Some(equal_sign_index) = arg.find('=') {
+            let before_split = arg.split_at(equal_sign_index);
+            let after_split = arg.split_at(equal_sign_index + 1);
+            return (String::from(before_split.0), String::from(after_split.1));
         }
-
-        (String::from(split_arg[0]), String::from(split_arg[1]))
+        (arg, String::from(""))
     }
 
     fn parse_value<F>((key, value): (String, String)) -> F
@@ -206,5 +207,19 @@ mod tests {
         assert_eq!(config.debug.spacing_bot, def_conf.debug.spacing_bot);
         assert_eq!(config.debug.spacing_top, def_conf.debug.spacing_top);
         assert_eq!(config.setup.working_dir, def_conf.setup.working_dir);
+    }
+
+    #[test]
+    fn test_parse_args_with_multiple_equals() {
+        let default_config = Config::default();
+        let args_vec =
+            vec![String::from("--behavior.file_action=(x=1; y=2; echo $x$y)")];
+
+        let config = Config::parse_args(default_config, args_vec.into_iter());
+
+        assert_eq!(
+            config.behavior.file_action,
+            String::from("(x=1; y=2; echo $x$y)")
+        );
     }
 }

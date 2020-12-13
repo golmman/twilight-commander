@@ -67,8 +67,9 @@ impl<W: Write> EventQueue<W> {
         thread::spawn(move || KeyEventHandler::handle(sender1));
         thread::spawn(move || ResizeEventHandler::handle(sender2));
 
-        while let Some(_) =
-            self.match_event(self.queue_receiver.recv().unwrap())
+        while self
+            .match_event(self.queue_receiver.recv().unwrap())
+            .is_some()
         {}
         // TODO: add a channel to shut down the threads?
     }

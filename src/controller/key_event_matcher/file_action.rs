@@ -1,5 +1,6 @@
 use crate::controller::EventQueue;
 use std::io::Write;
+use log::info;
 
 impl<W: Write> EventQueue<W> {
     pub fn do_file_action(&mut self) -> Option<()> {
@@ -13,6 +14,8 @@ impl<W: Write> EventQueue<W> {
             let file_path = &child_node.get_absolute_path();
             let file_action_replaced =
                 self.config.behavior.file_action.replace("%s", file_path);
+
+            info!("executing file action:\n{}", file_action_replaced);
 
             std::process::Command::new("bash")
                 .arg("-c")
