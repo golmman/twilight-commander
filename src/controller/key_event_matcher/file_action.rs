@@ -17,12 +17,20 @@ impl<W: Write> EventQueue<W> {
 
             info!("executing file action:\n{}", file_action_replaced);
 
-            std::process::Command::new("bash")
-                .arg("-c")
-                .arg(file_action_replaced)
-                .spawn()
-                .unwrap();
+
+            if self.config.behavior.quit_on_action {
+                self.command_to_run_on_exit = Some(file_action_replaced);
+                None
+            } else {
+                std::process::Command::new("bash")
+                    .arg("-c")
+                    .arg(file_action_replaced)
+                    .spawn()
+                    .unwrap();
+                Some(())
+            }
         }
-        Some(())
+        else
+            {Some(())}
     }
 }
