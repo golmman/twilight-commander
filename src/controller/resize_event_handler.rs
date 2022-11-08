@@ -1,6 +1,6 @@
 use crate::model::event::Event;
 use std::sync::mpsc::SyncSender;
-use std::sync::mpsc::{self, TryRecvError};
+use std::sync::mpsc;
 
 pub struct ResizeEventHandler {}
 
@@ -11,15 +11,7 @@ impl ResizeEventHandler {
                 sync_sender.send(Event::Resize).unwrap();
             })
         };
-        loop {
-            match rx.try_recv() {
-                Ok(_) | Err(TryRecvError::Disconnected) => {
-                    // println!("Terminating.");
-                    break;
-                }
-                Err(TryRecvError::Empty) => {}
-            }
-        }
+        let _ = rx.recv();
         signal_hook::unregister(hook_id.unwrap());
     }
 }
