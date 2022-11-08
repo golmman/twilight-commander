@@ -28,6 +28,7 @@ pub struct EventQueue<W: Write> {
 
     // TODO: should be part of the view?
     text_entries: Vec<String>,
+    command_to_run_on_exit: Option<String>,
 }
 
 impl<W: Write> EventQueue<W> {
@@ -48,6 +49,7 @@ impl<W: Write> EventQueue<W> {
 
         let text_entries = composer.compose_path_node(&path_node_root);
         pager.update(0, &text_entries, path_node_root.get_absolute_path());
+        let command_to_run_on_exit = None;
 
         Self {
             config,
@@ -58,20 +60,25 @@ impl<W: Write> EventQueue<W> {
             queue_receiver,
             queue_sender,
             text_entries,
+            command_to_run_on_exit
         }
     }
 
-    pub fn handle_messages(&mut self) {
+    pub fn handle_messages(&mut self) -> Option<String> {
+        let (tx1, rx1) = std::sync::mpsc::channel();
+        let (tx2, rx2) = std::sync::mpsc::channel();
         let sender1 = self.queue_sender.clone();
         let sender2 = self.queue_sender.clone();
-        thread::spawn(move || KeyEventHandler::handle(sender1));
-        thread::spawn(move || ResizeEventHandler::handle(sender2));
+        thread::spawn(move || KeyEventHandler::handle(sender1, rx1));
+        thread::spawn(move || ResizeEventHandler::handle(sender2, rx2));
 
         while self
             .match_event(self.queue_receiver.recv().unwrap())
             .is_some()
         {}
-        // TODO: add a channel to shut down the threads?
+        let _ = tx1.send(());
+        let _ = tx2.send(());
+        self.command_to_run_on_exit.clone()
     }
 
     fn match_event(&mut self, event: Event) -> Option<()> {

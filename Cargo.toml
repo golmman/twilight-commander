@@ -13,3 +13,4 @@ serde = { version = "1.0.101",  features = ["derive"] }
 signal-hook = "0.1.10"
 termion = "1.5.3"
 toml = "0.5.3"
+exec = "0.3.1"

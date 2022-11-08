@@ -10,6 +10,7 @@ use termion::raw::IntoRawMode;
 use utils::setup_logger;
 use view::composer::Composer;
 use view::Pager;
+use exec::execvp;
 
 mod controller;
 mod model;
@@ -17,20 +18,27 @@ mod utils;
 mod view;
 
 fn main() {
-    let _ = setup_logger();
 
-    let config = Config::new();
+    let command_to_run_on_exit = {
+        let _ = setup_logger();
 
-    let composer = Composer::from(config.clone());
+        let config = Config::new();
 
-    let pager = Pager::new(config.clone(), stdout().into_raw_mode().unwrap());
+        let composer = Composer::from(config.clone());
 
-    let path_node_root = PathNode::new_expanded(config.clone());
+        let pager = Pager::new(config.clone(), stdout().into_raw_mode().unwrap());
 
-    let mut event_queue =
-        EventQueue::new(config, composer, pager, path_node_root);
+        let path_node_root = PathNode::new_expanded(config.clone());
 
-    event_queue.handle_messages();
+        let mut event_queue =
+            EventQueue::new(config, composer, pager, path_node_root);
 
+        event_queue.handle_messages()
+    };
+
+    if let Some(cmd) = command_to_run_on_exit {
+        let _ = execvp("bash", &["bash", "-c", &cmd]);
+    };
+ 
     info!("clean exit");
 }
